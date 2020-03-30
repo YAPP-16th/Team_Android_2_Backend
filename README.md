@@ -114,7 +114,7 @@ Project Link: [project name](https://github.com/YAPP-16th/Team_Android_2_Backend
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [issues-shield]: https://img.shields.io/github/issues/YAPP-16th/Team_Android_2_Backend
-[issues-url]: https://github.com/YAPP-16th/Team_Android_2_Client/issues
+[issues-url]: https://github.com/YAPP-16th/Team_Android_2_Backend/issues
 [pulls-shield]: https://img.shields.io/github/issues-pr/YAPP-16th/Team_Android_2_Backend
 [pulls-url]: https://github.com/YAPP-16th/Team_Android_2_Client/pulls
 [license-shield]: https://img.shields.io/github/license/YAPP-16th/Team_Android_2_Backend
