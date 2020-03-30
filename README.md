@@ -2,7 +2,7 @@
 [![Pulls][pulls-shield]][pulls-url]
 [![MIT License][license-shield]][license-url]
 
-## YAPP 16기 [안드로이드 2팀 - 프로젝트 이름으로 변경] 😎😎
+## YAPP 16기 [안드로이드 2팀 - 팀플레이(TeamPlay)] 😎😎
 
 <br />
 <p align="center">
@@ -16,7 +16,7 @@
   <p align="center">
     프로젝트 한줄 설명
     <ul>
-        <li>PM - 김예연</li>
+        <li>PM - </li>
         <li>Designer - 김성규</li>
         <li>Android - 오준택, 최창익, 이오형</li>
         <li>Backend - 오성진, 최민성</li>
@@ -72,7 +72,7 @@ To get a local copy up and running follow these simple steps.
 ```
 MIT License
 
-Copyright (c) 2020 김예연 김성규 오준택 이오형 최창익 오성진 최민성
+Copyright (c) 2020 김성규 오준택 이오형 최창익 오성진 최민성
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -98,7 +98,6 @@ SOFTWARE.
 <!-- CONTACT -->
 ## Contact
 
-- 김예연 - yeyeyey.yapp@gmail.com
 - 김성규 - dsgn.yapp@gmail.com
 - 오준택 - becon.yapp@gmail.com
 - 이오형 - segfault.yapp@gmail.com
