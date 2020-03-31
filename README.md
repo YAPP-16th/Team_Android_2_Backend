@@ -23,10 +23,10 @@
     </ul>
     <br />
     스크럼 회의록<br>
-    <a href="https://docs.google.com/document/d/1AwAr7X_wwrbUWcQipvEMq6PF71IJJzm3U0lVygvCdD0/edit">- 2020/03/18</a><br>
-    <a href="https://docs.google.com/document/d/1k7en4Bh3_725r84Ec62UktykB5owpzijEYQ6GpFoBY8/edit#">- 2020/03/25</a><br>
-    <a href="https://docs.google.com/document/d/1ZzF5moWa2PcaX6NZF-YfGRRNO5HfYCOwkdiCYC7VSqo/edit">- 2020/03/28</a><br>
-    <a href="https://docs.google.com/document/d/1LU_6dQeyIGKo3tyJOiEmIRVc2p3LwNJtBpQLHUNIaRQ/edit">- 2020/03/31</a><br>
+    <a href="https://docs.google.com/document/d/1AwAr7X_wwrbUWcQipvEMq6PF71IJJzm3U0lVygvCdD0/edit">- 2020/03/18</a><br/>
+    <a href="https://docs.google.com/document/d/1k7en4Bh3_725r84Ec62UktykB5owpzijEYQ6GpFoBY8/edit#">- 2020/03/25</a><br/>
+    <a href="https://docs.google.com/document/d/1ZzF5moWa2PcaX6NZF-YfGRRNO5HfYCOwkdiCYC7VSqo/edit">- 2020/03/28</a><br/>
+    <a href="https://docs.google.com/document/d/1LU_6dQeyIGKo3tyJOiEmIRVc2p3LwNJtBpQLHUNIaRQ/edit">- 2020/03/31</a><br/>
   
     <br />
     <a href="https://github.com/github_username/repo"><strong>API</strong></a>
