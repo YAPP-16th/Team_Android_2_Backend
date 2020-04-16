@@ -1,0 +1,25 @@
+
+rootProject.name = "teamplay-backend"
+
+include 'application:teamplay-admin-api'
+findProject(':application:teamplay-admin-api')?.name = 'teamplay-admin-api'
+include 'application:teamplay-external-api'
+findProject(':application:teamplay-external-api')?.name = 'teamplay-external-api'
+
+include 'domain:teamplay-database-domain'
+findProject(':domain:teamplay-database-domain')?.name = 'teamplay-database-domain'
+include 'domain:teamplay-database-jpa-domain'
+findProject(':domain:teamplay-database-jpa-domain')?.name = 'teamplay-database-jpa-domain'
+include 'domain:teamplay-business-domain'
+findProject(':domain:teamplay-business-domain')?.name = 'teamplay-business-domain'
+
+include 'core:token-core'
+findProject(':core:token-core')?.name = 'token-core'
+include 'core:database-core'
+findProject(':core:database-core')?.name = 'database-core'
+include 'core:function-core'
+findProject(':core:function-core')?.name = 'function-core'
+
+
+
+
