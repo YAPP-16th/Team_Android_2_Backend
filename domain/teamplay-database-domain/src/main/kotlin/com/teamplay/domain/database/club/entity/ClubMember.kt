@@ -9,13 +9,13 @@ import javax.persistence.*
 data class ClubMember(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    override val id: Long,
+    override val id: Int,
 
     @ManyToOne
-    @JoinColumn(name = "clubs_id")
+    @JoinColumn(name = "club_id")
     var club: Club,
 
     @ManyToOne
-    @JoinColumn(name = "users_id")
+    @JoinColumn(name = "user_id")
     var user: User
 ): EntityId

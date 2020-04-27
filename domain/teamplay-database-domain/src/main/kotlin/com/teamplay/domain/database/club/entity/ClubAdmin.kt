@@ -9,7 +9,7 @@ import javax.persistence.*
 data class ClubAdmin(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    override val id: Long,
+    override val id: Int,
 
     @ManyToOne
     @JoinColumn(name = "clubs_id")

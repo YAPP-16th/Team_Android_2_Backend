@@ -2,6 +2,7 @@ package com.teamplay.domain.database.match.entity
 
 import com.teamplay.core.database.EntityId
 import com.teamplay.domain.database.club.entity.Club
+import org.hibernate.annotations.CreationTimestamp
 import java.util.*
 import javax.persistence.*
 import kotlin.random.Random
@@ -11,15 +12,15 @@ import kotlin.random.Random
 data class Match(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    override val id: Long,
+    override val id: Int,
 
     @OneToOne
-    @JoinColumn(name = "clubs_id")
+    @JoinColumn(name = "club_id",insertable=false, updatable=false)
     var home: Club? = null,
 
     @OneToOne
-    @JoinColumn(name = "clubs_id")
-    var away: Club,
+    @JoinColumn(name = "clubs_id",insertable=false, updatable=false)
+    var away: Club?,
 
     var location: String,
 
@@ -31,8 +32,11 @@ data class Match(
 
     var awayScore: Int,
 
+    @OneToOne
+    @JoinColumn(name = "clubs_id",insertable=false, updatable=false)
     var winner: Club? = null,
 
-    @Column(nullable = false)
+    @CreationTimestamp
+    @Column(nullable = false, insertable=false, updatable=false)
     var createDate: Date
 ): EntityId

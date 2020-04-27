@@ -2,6 +2,8 @@ package com.teamplay.domain.database.user.entity
 
 import com.teamplay.core.database.EntityId
 import com.teamplay.domain.database.club.entity.ClubMember
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
 import java.util.*
 import javax.persistence.*
 import javax.validation.constraints.Email
@@ -11,7 +13,7 @@ import javax.validation.constraints.Email
 data class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    override var id: Long?,
+    override var id: Int?,
 
     @Email
     @Column(nullable = false)
@@ -21,7 +23,7 @@ data class User(
     var hashedPassword: String,
 
     @Column(nullable = false)
-    var nickName : String,
+    var nickname : String,
 
     var name: String? = null,
     var age: Int? = null,
@@ -32,11 +34,14 @@ data class User(
     val ability: Ability? = null,
     val residence: String? = null,
 
+    @CreationTimestamp
     @Column(nullable = false)
     val signUpDate: Date,
+
+    @UpdateTimestamp
     var updateDate: Date? = null,
 
-    @OneToMany(mappedBy = "users")
+    @OneToMany(mappedBy = "user")
     var clubs: MutableList<ClubMember> = mutableListOf<ClubMember>()
 
 ): EntityId

@@ -2,6 +2,8 @@ package com.teamplay.domain.database.club.entity
 
 import com.teamplay.core.database.EntityId
 import com.teamplay.domain.database.user.entity.Ability
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
 import java.util.*
 import javax.persistence.*
 
@@ -10,7 +12,7 @@ import javax.persistence.*
 data class Club(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    override val id: Long,
+    override val id: Int,
 
     @Column(nullable = false)
     var name: String,
@@ -31,10 +33,13 @@ data class Club(
 
     var contact: String? = null,
 
+    @CreationTimestamp
     @Column(nullable = false)
     val createDate: Date,
+
+    @UpdateTimestamp
     var updateDate: Date? = null,
 
-    @OneToMany(mappedBy = "clubs")
+    @OneToMany(mappedBy = "club")
     var members: MutableList<ClubMember> = mutableListOf<ClubMember>()
 ): EntityId

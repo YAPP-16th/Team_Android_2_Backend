@@ -9,7 +9,6 @@ dependencies {
     implementation("javax.validation:validation-api:2.0.1.Final")
     implementation("org.hibernate:hibernate-core:5.4.6.Final")
 
-    implementation(project(":domain:teamplay-database-jpa-domain"))
     implementation(project(":core:database-core"))
 }
 
