@@ -12,7 +12,7 @@ import kotlin.random.Random
 data class Match(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    override val id: Int,
+    override val id: Long?,
 
     @OneToOne
     @JoinColumn(name = "club_id",insertable=false, updatable=false)
@@ -38,5 +38,5 @@ data class Match(
 
     @CreationTimestamp
     @Column(nullable = false, insertable=false, updatable=false)
-    var createDate: Date
+    val createdDate: Date
 ): EntityId

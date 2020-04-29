@@ -13,7 +13,7 @@ import javax.validation.constraints.Email
 data class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    override var id: Int?,
+    override var id: Long??,
 
     @Email
     @Column(nullable = false)
@@ -27,10 +27,16 @@ data class User(
 
     var name: String? = null,
     var age: Int? = null,
+
+    @Enumerated
     var position: Position? = null,
     var height: Int? = null,
+
+    @Enumerated
     var sex: Sex? = null,
     var introduce: String? = null,
+
+    @Enumerated
     val ability: Ability? = null,
     val residence: String? = null,
 
@@ -39,7 +45,7 @@ data class User(
     val signUpDate: Date,
 
     @UpdateTimestamp
-    var updateDate: Date? = null,
+    var updatedDate: Date? = null,
 
     @OneToMany(mappedBy = "user")
     var clubs: MutableList<ClubMember> = mutableListOf<ClubMember>()

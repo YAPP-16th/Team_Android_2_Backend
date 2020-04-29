@@ -12,11 +12,12 @@ import javax.persistence.*
 data class Club(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    override val id: Int,
+    override val id: Long?,
 
     @Column(nullable = false)
     var name: String,
 
+    @Enumerated
     @Column(nullable = false)
     var category: Category,
 
@@ -24,6 +25,7 @@ data class Club(
 
     var emblem: String? = null,
 
+    @Enumerated
     @Column(nullable = false)
     var ability: Ability,
 
@@ -35,10 +37,10 @@ data class Club(
 
     @CreationTimestamp
     @Column(nullable = false)
-    val createDate: Date,
+    val createdDate: Date,
 
     @UpdateTimestamp
-    var updateDate: Date? = null,
+    var updatedDate: Date? = null,
 
     @OneToMany(mappedBy = "club")
     var members: MutableList<ClubMember> = mutableListOf<ClubMember>()
