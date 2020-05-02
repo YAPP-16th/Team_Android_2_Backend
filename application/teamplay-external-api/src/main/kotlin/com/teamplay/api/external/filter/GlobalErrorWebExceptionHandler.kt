@@ -3,6 +3,7 @@ package com.teamplay.api.com.teamplay.api.external.filter
 import com.teamplay.api.com.teamplay.api.external.response.ErrorResponse
 import com.teamplay.core.function.error.CanHaveStatusError
 import com.teamplay.core.function.error.ConflictError
+import com.teamplay.core.function.error.ForbiddenError
 import com.teamplay.core.function.error.NotFoundError
 import org.slf4j.LoggerFactory
 import org.springframework.core.annotation.Order
@@ -29,5 +30,9 @@ class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(value = [NotFoundError::class])
     fun notFoundException(error : NotFoundError) = error.message!!
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(value = [ForbiddenError::class])
+    fun forbiddenException(error : ForbiddenError) = error.message!!
 
 }

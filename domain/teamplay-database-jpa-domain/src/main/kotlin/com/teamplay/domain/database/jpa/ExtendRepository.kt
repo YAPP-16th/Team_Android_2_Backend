@@ -11,6 +11,7 @@ import java.util.*
 import javax.transaction.Transactional
 import java.util.*
 import javax.persistence.Entity
+import javax.swing.text.html.Option
 
 @NoRepositoryBean
 interface ExtendedRepository<T : EntityId> : JpaRepository<T, Int> {
