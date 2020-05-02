@@ -15,12 +15,12 @@ data class Match(
     override val id: Long?,
 
     @OneToOne
-    @JoinColumn(name = "club_id",insertable=false, updatable=false)
+    @JoinColumn(name = "home_id")
     var home: Club? = null,
 
     @OneToOne
-    @JoinColumn(name = "clubs_id",insertable=false, updatable=false)
-    var away: Club?,
+    @JoinColumn(name = "away_id")
+    var away: Club? = null,
 
     var location: String,
 
@@ -33,10 +33,10 @@ data class Match(
     var awayScore: Int,
 
     @OneToOne
-    @JoinColumn(name = "clubs_id",insertable=false, updatable=false)
+    @JoinColumn(name = "winner_id")
     var winner: Club? = null,
 
     @CreationTimestamp
-    @Column(nullable = false, insertable=false, updatable=false)
+    @Column(nullable = false)
     val createdDate: Date
 ): EntityId

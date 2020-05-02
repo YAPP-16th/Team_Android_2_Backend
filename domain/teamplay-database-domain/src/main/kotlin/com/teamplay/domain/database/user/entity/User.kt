@@ -13,7 +13,7 @@ import javax.validation.constraints.Email
 data class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    override var id: Long??,
+    override var id: Long?,
 
     @Email
     @Column(nullable = false)
