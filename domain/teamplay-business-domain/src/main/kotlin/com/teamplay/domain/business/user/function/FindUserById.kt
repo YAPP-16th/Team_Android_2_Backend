@@ -6,8 +6,8 @@ import com.teamplay.domain.database.user.entity.User
 
 class FindUserById(
     private val userRepository: UserRepository
-): Function<Int, User> {
-    override fun apply(userId: Int): User {
+): Function<Long, User> {
+    override fun apply(userId: Long): User {
 
         return userRepository.findById(userId).get()
     }

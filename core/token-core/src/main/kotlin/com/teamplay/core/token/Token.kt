@@ -1,7 +1,6 @@
 package com.teamplay.core.token
 
-import io.jsonwebtoken.Claims
-import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.*
 import io.jsonwebtoken.security.Keys
 import java.util.*
 import javax.crypto.SecretKey
@@ -19,6 +18,7 @@ class Token(private val claims: Claims) : Claims {
         fun decode(jwt: String, secretKey: String) = decode(jwt, Keys.hmacShaKeyFor(secretKey.toByteArray()))
 
         @JvmStatic
+        @Throws
         fun decode(jwt: String, secretKey: SecretKey): Token {
             return Token(
                 Jwts.parser()

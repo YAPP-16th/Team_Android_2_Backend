@@ -13,19 +13,19 @@ import java.util.*
 import javax.persistence.Entity
 
 @NoRepositoryBean
-interface ExtendedRepository<T : EntityId> : JpaRepository<T, Int> {
+interface ExtendedRepository<T : EntityId> : JpaRepository<T, Long> {
 
     @Transactional
     @Modifying
     @Query("delete from #{#entityName} entity where entity.id in :ids")
-    fun deleteAllByIdIn(@Param("ids") ids: Collection<Int>)
+    fun deleteAllByIdIn(@Param("ids") ids: Collection<Long>)
 
     @Transactional
     @Modifying
     @Query("delete from #{#entityName} entity where entity.id = :id")
-    override fun deleteById(@Param("id") id: Int)
+    override fun deleteById(@Param("id") id: Long)
 
-    fun <T> findById(id: Int, type: Class<T>): Optional<T>
+    fun <T> findById(id: Long, type: Class<T>): Optional<T>
 
     fun <T> findAllBy(type: Class<T>): List<T>
 

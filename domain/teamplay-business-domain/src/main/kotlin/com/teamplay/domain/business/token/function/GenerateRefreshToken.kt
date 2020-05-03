@@ -1,7 +1,7 @@
 package com.teamplay.domain.business.token.function
 
-import com.teamplay.core.token.Claims
-import com.teamplay.core.token.Jwts
+import io.jsonwebtoken.Claims
+import io.jsonwebtoken.Jwts
 
 class GenerateRefreshToken(
     private val defaultClams: Claims = Jwts.claims()
