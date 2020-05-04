@@ -5,12 +5,12 @@ import com.teamplay.domain.database.jpa.user.repository.UserRepository
 import com.teamplay.domain.database.user.entity.User
 import java.util.*
 
-class FindUserById(
+class FindByUserEmail(
     private val userRepository: UserRepository
-): Function<Long, User> {
-    override fun apply(userId: Long): User {
+): Function<String, User> {
+    override fun apply(email: String): User {
 
-        return userRepository.findById(userId).get()
+        return userRepository.findByEmail(email).get()
     }
 
 }

@@ -5,12 +5,10 @@ import io.jsonwebtoken.Jwts
 import java.util.*
 
 class GenerateAccessToken(
-    private val defaultClams: Claims = Jwts.claims(),
-    private val expirationInMs: Int
+    private val defaultClams: Claims = Jwts.claims()
 ): GenerateToken(
     Jwts.claims().apply {
         putAll(defaultClams)
         subject = "AccessToken"
-        expiration = Date(Date().time + expirationInMs)
     }
 )

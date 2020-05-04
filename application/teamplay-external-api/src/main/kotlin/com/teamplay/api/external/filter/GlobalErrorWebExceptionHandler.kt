@@ -29,9 +29,9 @@ class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(value = [UnauthorizedError::class])
-    fun unauthorizedError(error : UnauthorizedError) = error.message!!
+    fun unauthorizedException(error : UnauthorizedError) = error.message!!
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(value = [ForbiddenError::class])
-    fun forbiddenError(error : ForbiddenError) = error.message!!
+    fun forbiddenException(error : ForbiddenError) = error.message!!
 }
