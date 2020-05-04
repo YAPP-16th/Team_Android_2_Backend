@@ -17,7 +17,7 @@ data class User(
 
     @Email
     @Column(nullable = false)
-    var email:String,
+    var email: String,
 
     @Column(nullable = false)
     var hashedPassword: String,

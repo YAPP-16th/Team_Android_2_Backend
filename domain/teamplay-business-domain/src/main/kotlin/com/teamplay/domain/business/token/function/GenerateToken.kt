@@ -1,8 +1,8 @@
 package com.teamplay.domain.business.token.function
 
 import com.teamplay.core.function.Function
-import com.teamplay.core.token.Claims
 import com.teamplay.core.token.Token
+import io.jsonwebtoken.Claims
 
 abstract class GenerateToken(
     private val defaultClaims: Claims

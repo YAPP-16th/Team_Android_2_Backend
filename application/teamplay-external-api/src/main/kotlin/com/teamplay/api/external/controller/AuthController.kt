@@ -1,6 +1,7 @@
 package com.teamplay.api.com.teamplay.api.external.controller
 
 import com.teamplay.api.com.teamplay.api.external.config.baseUrl
+import com.teamplay.api.com.teamplay.api.external.request.SignInByEmailRequest
 import com.teamplay.api.com.teamplay.api.external.request.SignUpByEmailRequest
 import com.teamplay.api.com.teamplay.api.external.response.SignInResponse
 import com.teamplay.api.com.teamplay.api.external.service.AuthService
@@ -19,8 +20,8 @@ class AuthController {
     @ApiOperation(value = "로그인")
     @PostMapping("/sign-in")
     @ResponseStatus(HttpStatus.OK)
-    fun signIn(): String {
-        return "가입 성공 여부"
+    fun signIn(@RequestBody signInByEmailRequest: SignInByEmailRequest): SignInResponse {
+        return authService.signInByEmail(signInByEmailRequest)
     }
 
     @ApiOperation(value = "회원가입")
