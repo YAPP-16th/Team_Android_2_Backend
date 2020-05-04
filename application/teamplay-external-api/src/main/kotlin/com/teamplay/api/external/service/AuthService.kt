@@ -3,16 +3,17 @@ package com.teamplay.api.com.teamplay.api.external.service
 import com.teamplay.api.com.teamplay.api.external.request.SignInByEmailRequest
 import com.teamplay.api.com.teamplay.api.external.request.SignUpByEmailRequest
 import com.teamplay.api.com.teamplay.api.external.response.SignInResponse
-import com.teamplay.domain.business.token.function.EncodeToken
-import com.teamplay.domain.business.token.function.GenerateAccessToken
-import com.teamplay.domain.business.token.function.GenerateAccessTokenByUser
-import com.teamplay.domain.business.token.function.GenerateRefreshTokenByUser
-import com.teamplay.domain.business.user.dto.InputPasswordAndRealPassword
+
+import com.teamplay.domain.business.token.function.*
 import com.teamplay.domain.business.user.dto.UserInfo
+import com.teamplay.domain.business.user.dto.InputPasswordAndRealPassword
 import com.teamplay.domain.business.user.function.FindByUserEmail
+import com.teamplay.domain.business.user.function.SignUpUser
+import com.teamplay.domain.business.user.function.FindUserById
 import com.teamplay.domain.business.user.function.SignUpUser
 import com.teamplay.domain.business.user.validator.CheckDuplicateUserEmail
 import com.teamplay.domain.business.user.validator.CheckDuplicateUserNickname
+import com.teamplay.domain.business.user.validator.CheckExistUserById
 import com.teamplay.domain.business.user.validator.CheckExistUserEmail
 import com.teamplay.domain.business.user.validator.ConfirmPasswordMatching
 import com.teamplay.domain.database.jpa.user.repository.UserRepository
@@ -34,13 +35,16 @@ class AuthService @Autowired constructor(
     private val generateAccessTokenByUser = GenerateAccessTokenByUser(jwtExpirationInMs)
     private val generateRefreshTokenByUser = GenerateRefreshTokenByUser()
     private val encodeToken = EncodeToken(jwtSecretKey)
+    private val findUserById = FindUserById(userRepository)
+    private val findUserIdByAccessToken = FindUserIdByAccessToken(jwtSecretKey)
+    private val findUserIdByRefreshToken = FindUserIdByRefreshToken(jwtSecretKey)
     private val findByUserEmail = FindByUserEmail(userRepository)
 
-    private val checkDuplicateUserEmail = CheckDuplicateUserEmail(userRepository)
-    private val checkDuplicateUserNickname = CheckDuplicateUserNickname(userRepository)
     private val checkExistUserEmail = CheckExistUserEmail(userRepository)
     private val confirmPasswordMatching = ConfirmPasswordMatching()
-
+    private val checkDuplicateUserEmail = CheckDuplicateUserEmail(userRepository)
+    private val checkDuplicateUserNickname = CheckDuplicateUserNickname(userRepository)
+    private val checkExistUserById = CheckExistUserById(userRepository)
 
     fun signUpByEmail(signUpByEmailRequest: SignUpByEmailRequest): SignInResponse{
         checkDuplicateUserEmail.verify(signUpByEmailRequest.email)
@@ -75,6 +79,13 @@ class AuthService @Autowired constructor(
             generateRefreshToken(user),
             UserInfo(user.id, user.nickname, user.email)
         )
+    }
+
+    fun refreshAccessToken(refreshToken: String): String{
+        val userId = findUserIdByRefreshToken(refreshToken)
+        checkExistUserById.verify(userId)
+        val user = findUserById(userId)
+        return generateAccessToken(user)
     }
 
     private fun generateAccessToken(user: User): String{

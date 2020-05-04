@@ -37,6 +37,6 @@ class AuthController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     fun refreshAccessToken(@Valid @RequestHeader refreshToken: String): String {
-        return "엑세스 토큰 재발급"
+        return authService.refreshAccessToken(refreshToken)
     }
 }
