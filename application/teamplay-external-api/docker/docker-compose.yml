@@ -1,0 +1,20 @@
+version: '3.7'
+
+services:
+  cloud-config-server:
+    build:
+      context: .
+      args:
+        - env: $ENV
+    container_name: teamplay-external-api
+    environment:
+      - VIRTUAL_HOST=api.DOMAIN
+      - LETSENCRYPT_HOST=api.DOMAIN
+      - LETSENCRYPT_EMAIL=sj.oh.yapp@gmail.com
+      - VIRTUAL_PORT=8080
+    networks:
+      - nginx-proxy
+
+networks:
+  nginx-proxy:
+    name: nginx-proxy
