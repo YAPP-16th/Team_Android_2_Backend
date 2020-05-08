@@ -12,5 +12,4 @@ spring:
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-
 logging.level.org.hibernate.type.descriptor.sql: trace
