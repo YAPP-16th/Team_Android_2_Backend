@@ -2,12 +2,14 @@ package com.teamplay.api.com.teamplay.api.external.service
 
 import com.teamplay.api.com.teamplay.api.external.request.CreateClubRequest
 import com.teamplay.api.com.teamplay.api.external.request.GetClubsRequest
+import com.teamplay.api.com.teamplay.api.external.response.ClubResponse
 import com.teamplay.api.com.teamplay.api.external.response.ClubsResponse
 import com.teamplay.api.com.teamplay.api.external.response.CreateClubResponse
 import com.teamplay.domain.business.club.dto.ClubInfo
 import com.teamplay.domain.business.club.dto.NameAndPage
 import com.teamplay.domain.business.club.function.*
 import com.teamplay.domain.business.club.validator.CheckDuplicateClubName
+import com.teamplay.domain.business.club.validator.CheckExistClub
 import com.teamplay.domain.business.user.dto.UserInfo
 import com.teamplay.domain.database.club.entity.Club
 import com.teamplay.domain.database.club.entity.ClubAdmin
@@ -31,8 +33,11 @@ class ClubService @Autowired constructor(
     private val registerAdmin = RegisterAdmin(clubAdminRepository)
     private val registerMember = RegisterMember(clubMemberRepository)
     private val findClubsByName = FindClubsByName(clubRepository)
+    private val findClubMembersByClubId = FindClubMembersByClubId(clubMemberRepository)
+    private val findClubAdminsByClubId = FindClubAdminsByClubId(clubAdminRepository)
 
     private val checkDuplicateClubName = CheckDuplicateClubName(clubRepository)
+    private val checkExistClub = CheckExistClub(clubRepository)
 
     fun registerClub(createClubRequest: CreateClubRequest, user: User): CreateClubResponse{
         checkDuplicateClubName.verify(createClubRequest.name)
@@ -54,8 +59,25 @@ class ClubService @Autowired constructor(
         return registerMember(ClubMember(null, club, user))
     }
 
-    fun findClub(clubId: Long): Club{
-        return findClubById(clubId)
+    fun findClub(clubId: Long): ClubResponse{
+        checkExistClub.verify(clubId)
+        val members = clubMemberToUserInfo(findClubMembers(clubId))
+        val admins = clubAdminToUserInfo(findClubAdmins(clubId))
+        val club = findClubById(clubId)
+
+        return ClubResponse(
+            clubInfo = ClubInfo(club),
+            admins = admins,
+            members = members
+        )
+    }
+
+    fun findClubMembers(clubId: Long): MutableList<ClubMember> {
+        return findClubMembersByClubId(clubId)
+    }
+
+    fun findClubAdmins(clubId: Long): MutableList<ClubAdmin> {
+        return findClubAdminsByClubId(clubId)
     }
 
     fun findClubInfosByName(getClubsRequest: GetClubsRequest): ClubsResponse{
