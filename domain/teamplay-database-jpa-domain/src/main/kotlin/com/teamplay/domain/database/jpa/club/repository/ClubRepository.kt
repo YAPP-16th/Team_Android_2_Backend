@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ClubRepository : ExtendedRepository<Club> {
+    fun existsByName(name: String): Boolean
 }

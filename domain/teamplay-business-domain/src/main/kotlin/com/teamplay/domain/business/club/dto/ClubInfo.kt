@@ -18,7 +18,8 @@ class ClubInfo constructor(
     val createDate: Date,
     val updateDate: Date,
     val createTeamDate: String,
-    val tags: MutableList<String>
+    val tags: MutableList<String>,
+    val questions: MutableList<String>
 ){
     constructor(club: Club): this(
         club.id!!,
@@ -33,6 +34,7 @@ class ClubInfo constructor(
         club.createdDate,
         club.updatedDate!!,
         club.createTeamDate,
-        club.tags
+        club.tags,
+        club.questions
     )
 }

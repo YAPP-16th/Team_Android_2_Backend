@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Repository
-interface UserRepository : ExtendedRepository<User> {
+interface UserRepository: ExtendedRepository<User> {
 
     fun findByEmail(email: String): Optional<User>
 

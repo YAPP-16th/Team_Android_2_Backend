@@ -7,6 +7,7 @@ import com.teamplay.domain.business.club.function.CreateClub
 import com.teamplay.domain.business.club.function.FindClubById
 import com.teamplay.domain.business.club.function.RegisterAdmin
 import com.teamplay.domain.business.club.function.RegisterMember
+import com.teamplay.domain.business.club.validator.CheckDuplicateClubName
 import com.teamplay.domain.business.user.dto.UserInfo
 import com.teamplay.domain.database.club.entity.Club
 import com.teamplay.domain.database.club.entity.ClubAdmin
@@ -30,7 +31,10 @@ class ClubService @Autowired constructor(
     private val registerAdmin = RegisterAdmin(clubAdminRepository)
     private val registerMember = RegisterMember(clubMemberRepository)
 
+    private val checkDuplicateClubName = CheckDuplicateClubName(clubRepository)
+
     fun registerClub(createClubRequest: CreateClubRequest, user: User): CreateClubResponse{
+        checkDuplicateClubName.verify(createClubRequest.name)
         var club = createClub(requestToClub(createClubRequest))
         club.admin.add(registerAdminInClub(user, club))
         club.members.add(registerMemberClub(user,club))
@@ -83,7 +87,8 @@ class ClubService @Autowired constructor(
             contact = createClubRequest.contact,
             createdDate = Date(),
             createTeamDate = createClubRequest.createTeamDate,
-            tags = createClubRequest.tags
+            tags = createClubRequest.tags,
+            questions = createClubRequest.questions
         )
     }
 }
