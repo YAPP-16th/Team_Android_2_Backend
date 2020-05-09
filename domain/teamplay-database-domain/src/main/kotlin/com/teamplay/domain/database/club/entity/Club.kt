@@ -35,6 +35,8 @@ data class Club(
 
     var contact: String? = null,
 
+    val createTeamDate: String,
+
     @CreationTimestamp
     @Column(nullable = false)
     val createdDate: Date,
@@ -42,6 +44,12 @@ data class Club(
     @UpdateTimestamp
     var updatedDate: Date? = null,
 
+    @ElementCollection
+    val tags: MutableList<String> = mutableListOf<String>(),
+
     @OneToMany(mappedBy = "club")
-    var members: MutableList<ClubMember> = mutableListOf<ClubMember>()
+    var members: MutableList<ClubMember> = mutableListOf<ClubMember>(),
+
+    @OneToMany(mappedBy = "club")
+    var admin: MutableList<ClubAdmin> = mutableListOf<ClubAdmin>()
 ): EntityId
