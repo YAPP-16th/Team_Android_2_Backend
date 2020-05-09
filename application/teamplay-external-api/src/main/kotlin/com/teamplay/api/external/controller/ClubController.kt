@@ -2,6 +2,7 @@ package com.teamplay.api.com.teamplay.api.external.controller
 
 import com.teamplay.api.com.teamplay.api.external.request.CreateClubRequest
 import com.teamplay.api.com.teamplay.api.external.request.GetClubsRequest
+import com.teamplay.api.com.teamplay.api.external.response.ClubResponse
 import com.teamplay.api.com.teamplay.api.external.response.ClubsResponse
 import com.teamplay.api.com.teamplay.api.external.response.CreateClubResponse
 import com.teamplay.api.com.teamplay.api.external.service.AuthService
@@ -42,16 +43,17 @@ class ClubController {
 
     @ApiOperation(value = "동호회 정보")
     @GetMapping("/{clubId}")
-    fun get(@PathVariable clubId: Long): String {
+    @ResponseStatus(HttpStatus.OK)
+    fun getClub(@PathVariable clubId: Long): ClubResponse {
         // 동호회 목록 페이징 처리하여 리턴할지 고민.
-        return "동호회 상세 정보"
+        return clubService.findClub(clubId)
     }
 
-    @ApiOperation(value = "가입한 동호회 리스트")
-    @GetMapping("/{userId}")
-    fun getJoinedClub(@PathVariable userId: Long): String {
-        return "가입한 동호회 리스트"
-    }
+//    @ApiOperation(value = "가입한 동호회 리스트")
+//    @GetMapping("/{userId}")
+//    fun getJoinedClub(@PathVariable userId: Long): String {
+//        return "가입한 동호회 리스트"
+//    }
 
     @ApiOperation(value = "추천 동호회 리스트")
     @GetMapping("/recommendation")
