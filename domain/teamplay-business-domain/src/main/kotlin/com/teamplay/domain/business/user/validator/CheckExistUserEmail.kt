@@ -7,9 +7,7 @@ import com.teamplay.domain.database.jpa.user.repository.UserRepository
 class CheckExistUserEmail(
     private val repository: UserRepository
 ): ValidatorWithError<String>(UserIsNotExistError()) {
-
     override fun apply(email: String): Boolean {
         return repository.existsByEmail(email)
     }
-
 }
