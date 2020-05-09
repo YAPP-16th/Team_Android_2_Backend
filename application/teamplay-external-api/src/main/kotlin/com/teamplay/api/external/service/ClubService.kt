@@ -1,12 +1,12 @@
 package com.teamplay.api.com.teamplay.api.external.service
 
 import com.teamplay.api.com.teamplay.api.external.request.CreateClubRequest
+import com.teamplay.api.com.teamplay.api.external.request.GetClubsRequest
+import com.teamplay.api.com.teamplay.api.external.response.ClubsResponse
 import com.teamplay.api.com.teamplay.api.external.response.CreateClubResponse
 import com.teamplay.domain.business.club.dto.ClubInfo
-import com.teamplay.domain.business.club.function.CreateClub
-import com.teamplay.domain.business.club.function.FindClubById
-import com.teamplay.domain.business.club.function.RegisterAdmin
-import com.teamplay.domain.business.club.function.RegisterMember
+import com.teamplay.domain.business.club.dto.NameAndPage
+import com.teamplay.domain.business.club.function.*
 import com.teamplay.domain.business.club.validator.CheckDuplicateClubName
 import com.teamplay.domain.business.user.dto.UserInfo
 import com.teamplay.domain.database.club.entity.Club
@@ -30,6 +30,7 @@ class ClubService @Autowired constructor(
     private val createClub = CreateClub(clubRepository)
     private val registerAdmin = RegisterAdmin(clubAdminRepository)
     private val registerMember = RegisterMember(clubMemberRepository)
+    private val findClubsByName = FindClubsByName(clubRepository)
 
     private val checkDuplicateClubName = CheckDuplicateClubName(clubRepository)
 
@@ -55,6 +56,16 @@ class ClubService @Autowired constructor(
 
     fun findClub(clubId: Long): Club{
         return findClubById(clubId)
+    }
+
+    fun findClubInfosByName(getClubsRequest: GetClubsRequest): ClubsResponse{
+        val clubsPage = findClubsByName(NameAndPage(getClubsRequest.name, getClubsRequest.currentPage))
+        val clubs = clubsPage.content
+        return ClubsResponse(
+            clubsToClubInfos(clubs),
+            clubsPage.totalPages,
+            clubsPage.number
+        )
     }
 
     private fun clubAdminToUserInfo(admins: MutableList<ClubAdmin>): MutableList<UserInfo>{
@@ -90,5 +101,14 @@ class ClubService @Autowired constructor(
             tags = createClubRequest.tags,
             questions = createClubRequest.questions
         )
+    }
+
+    private fun clubsToClubInfos(clubs: MutableList<Club>): MutableList<ClubInfo>{
+        var clubInfos = mutableListOf<ClubInfo>()
+        for(club in clubs){
+            clubInfos.add(ClubInfo(club))
+        }
+
+        return clubInfos
     }
 }

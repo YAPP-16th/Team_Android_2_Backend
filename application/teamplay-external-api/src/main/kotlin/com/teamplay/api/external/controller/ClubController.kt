@@ -1,11 +1,14 @@
 package com.teamplay.api.com.teamplay.api.external.controller
 
 import com.teamplay.api.com.teamplay.api.external.request.CreateClubRequest
+import com.teamplay.api.com.teamplay.api.external.request.GetClubsRequest
+import com.teamplay.api.com.teamplay.api.external.response.ClubsResponse
 import com.teamplay.api.com.teamplay.api.external.response.CreateClubResponse
 import com.teamplay.api.com.teamplay.api.external.service.AuthService
 import com.teamplay.api.com.teamplay.api.external.service.ClubService
 import io.swagger.annotations.ApiOperation
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
@@ -20,6 +23,7 @@ class ClubController {
 
     @ApiOperation(value = "동호회 생성")
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     fun registerClub(
         @Valid @RequestHeader(required = false) accessToken: String,
         @RequestBody createClubRequest: CreateClubRequest
@@ -30,16 +34,15 @@ class ClubController {
 
     @ApiOperation(value = "동호회 목록 정보")
     @GetMapping
-    fun find(): String {
-        // 동호회 목록 페이징 처리하여 리턴할지 고민.
-        // 찾기도 여기로 검색
-        // spec 정의해서
-        return "동호회 목록 정보"
+    @ResponseStatus(HttpStatus.OK)
+    fun getClubs(getClubsRequest: GetClubsRequest): ClubsResponse {
+
+        return clubService.findClubInfosByName(getClubsRequest)
     }
 
-    @ApiOperation(value = "동호회 상세 정보")
-    @GetMapping("/{id}")
-    fun get(@PathVariable id: Long): String {
+    @ApiOperation(value = "동호회 정보")
+    @GetMapping("/{clubId}")
+    fun get(@PathVariable clubId: Long): String {
         // 동호회 목록 페이징 처리하여 리턴할지 고민.
         return "동호회 상세 정보"
     }
