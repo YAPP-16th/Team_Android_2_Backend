@@ -2,14 +2,14 @@ package com.teamplay.api.com.teamplay.api.external.service
 
 import com.teamplay.api.com.teamplay.api.external.request.SignInByEmailRequest
 import com.teamplay.api.com.teamplay.api.external.request.SignUpByEmailRequest
+import com.teamplay.api.com.teamplay.api.external.response.PossibleEmailResponse
+import com.teamplay.api.com.teamplay.api.external.response.PossibleNicknameResponse
 import com.teamplay.api.com.teamplay.api.external.response.SignInResponse
 
 import com.teamplay.domain.business.token.function.*
 import com.teamplay.domain.business.user.dto.UserInfo
 import com.teamplay.domain.business.user.dto.InputPasswordAndRealPassword
-import com.teamplay.domain.business.user.function.FindByUserEmail
-import com.teamplay.domain.business.user.function.SignUpUser
-import com.teamplay.domain.business.user.function.FindUserById
+import com.teamplay.domain.business.user.function.*
 import com.teamplay.domain.business.user.validator.CheckDuplicateUserEmail
 import com.teamplay.domain.business.user.validator.CheckDuplicateUserNickname
 import com.teamplay.domain.business.user.validator.CheckExistUserById
@@ -38,6 +38,8 @@ class AuthService @Autowired constructor(
     private val findUserIdByAccessToken = FindUserIdByAccessToken(jwtSecretKey)
     private val findUserIdByRefreshToken = FindUserIdByRefreshToken(jwtSecretKey)
     private val findByUserEmail = FindByUserEmail(userRepository)
+    private val checkPossibleEmail = CheckPossibleEmail(userRepository)
+    private val checkPossibleNickname = CheckPossibleNickname(userRepository)
 
     private val checkExistUserEmail = CheckExistUserEmail(userRepository)
     private val confirmPasswordMatching = ConfirmPasswordMatching()
@@ -83,6 +85,20 @@ class AuthService @Autowired constructor(
         checkExistUserById.verify(userId)
 
         return userId
+    }
+
+    fun checkPossibleUserNickname(Nickname: String): PossibleNicknameResponse {
+        val possible = checkPossibleNickname(Nickname)
+        var message = if(possible) "존재하는 닉네임입니다." else "존재하지 않는 닉네임입니다."
+
+        return PossibleNicknameResponse(possible, message)
+    }
+
+    fun checkPossibleUserEmail(email: String): PossibleEmailResponse{
+        val possible = checkPossibleEmail(email)
+        var message = if(possible) "존재하는 이메일입니다." else "존재하지 않는 이메일입니다."
+
+        return PossibleEmailResponse(possible, message)
     }
 
     private fun userToSignInResponse(user: User): SignInResponse{
