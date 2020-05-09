@@ -29,7 +29,6 @@ class AuthController {
     @ApiOperation(value = "회원가입")
     @PostMapping("/sign-up")
     @ResponseStatus(HttpStatus.CREATED)
-    @ResponseBody
     fun signUp(@RequestBody signUpByEmailRequest: SignUpByEmailRequest): SignInResponse {
         return authService.signUpByEmail(signUpByEmailRequest)
     }
@@ -37,7 +36,6 @@ class AuthController {
     @ApiOperation(value = "이메일 중복 체크")
     @GetMapping("/exist/email/{email}")
     @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
     fun checkDuplicateUserEmail(@PathVariable email: String): PossibleEmailResponse {
         return authService.checkPossibleUserEmail(email)
     }
@@ -45,7 +43,6 @@ class AuthController {
     @ApiOperation(value = "닉네임 중복 체크")
     @GetMapping("/exist/nickname/{nickname}")
     @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
     fun checkDuplicateUserNickname(@PathVariable nickname: String): PossibleNicknameResponse {
         return authService.checkPossibleUserNickname(nickname)
     }
@@ -53,7 +50,6 @@ class AuthController {
     @ApiOperation(value = "액세스 토큰 재발급")
     @GetMapping("/access-token")
     @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
     fun refreshAccessToken(@Valid @RequestHeader refreshToken: String): String {
         return authService.refreshAccessToken(refreshToken)
     }
