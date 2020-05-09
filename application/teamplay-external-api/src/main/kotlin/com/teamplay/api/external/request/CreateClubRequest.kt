@@ -13,5 +13,6 @@ data class CreateClubRequest(
     val introduce: String? = null,
     val contact: String? = null,
     val createTeamDate: String,
-    val tags: MutableList<String>
+    val tags: MutableList<String>,
+    val questions: MutableList<String>
 )
