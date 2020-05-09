@@ -21,7 +21,7 @@ data class Club(
     @Column(nullable = false)
     var category: Category,
 
-    var location: String? = null,
+    var location: String,
 
     var emblem: String? = null,
 

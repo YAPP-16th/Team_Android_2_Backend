@@ -5,8 +5,7 @@ import com.teamplay.api.com.teamplay.api.external.request.GetClubsRequest
 import com.teamplay.api.com.teamplay.api.external.response.ClubResponse
 import com.teamplay.api.com.teamplay.api.external.response.ClubsResponse
 import com.teamplay.api.com.teamplay.api.external.response.CreateClubResponse
-import com.teamplay.domain.business.club.dto.ClubInfo
-import com.teamplay.domain.business.club.dto.NameAndPage
+import com.teamplay.domain.business.club.dto.*
 import com.teamplay.domain.business.club.function.*
 import com.teamplay.domain.business.club.validator.CheckDuplicateClubName
 import com.teamplay.domain.business.club.validator.CheckExistClub
@@ -59,16 +58,29 @@ class ClubService @Autowired constructor(
         return registerMember(ClubMember(null, club, user))
     }
 
+    // ToDo : 현재 임시 데이터로 ~~Item을 반환중임, 리턴타입 모두 추후 수정 해야 함
     fun findClub(clubId: Long): ClubResponse{
         checkExistClub.verify(clubId)
         val members = clubMemberToUserInfo(findClubMembers(clubId))
         val admins = clubAdminToUserInfo(findClubAdmins(clubId))
         val club = findClubById(clubId)
 
+        // 가데이터 생성
+        val noticeItem1 = NoticeItem(club.name+" 모집 공고", club.createTeamDate, "저희는 소중한 팀플레이어를 구합니다.")
+        val resultItem = ResultItem("테스트팀",club.createTeamDate, true)
+        val resultItem2 = ResultItem("테스트팀",club.createTeamDate, false)
+        val teamMainFeedItems = mutableListOf<TeamMainFeedItem>()
+        teamMainFeedItems.add(TeamMainFeedItem(0,null,noticeItem1))
+        teamMainFeedItems.add(TeamMainFeedItem(1,resultItem,null))
+        teamMainFeedItems.add(TeamMainFeedItem(1,resultItem2,null))
         return ClubResponse(
-            clubInfo = ClubInfo(club),
-            admins = admins,
-            members = members
+            tag = club.tags[0],
+            name = club.name,
+            address = club.location,
+            createDate = club.createTeamDate,
+            memberCount = members.size,
+            feedCount = 3,
+            feedItems = teamMainFeedItems
         )
     }
 
@@ -113,6 +125,7 @@ class ClubService @Autowired constructor(
             id = null,
             name = createClubRequest.name,
             category =  createClubRequest.category,
+            location = createClubRequest.location,
             emblem =  createClubRequest.emblem,
             ability = createClubRequest.ability,
             thumbnail = createClubRequest.thumbnail,
