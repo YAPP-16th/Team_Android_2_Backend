@@ -24,9 +24,9 @@ import java.util.*
 
 @Service
 class AuthService @Autowired constructor(
-    @Value("\${JWT_SECRET}")
+    @Value("\${jwt.secret}")
     private val jwtSecretKey : String,
-    @Value("\${JWT_EXPIRATION}")
+    @Value("\${jwt.expiration}")
     private val jwtExpirationInMs: Int,
     userRepository: UserRepository
 ) {

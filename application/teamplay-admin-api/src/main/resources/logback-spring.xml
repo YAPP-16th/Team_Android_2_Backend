@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+
+    <springProperty scope="context" name="profile" source="spring.profiles.active"/>
+
+    <springProfile name="local">
+        <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+        <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
+        <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
+
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%clr(%d{LOG_DATEFORMAT_PATTERN:yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}</pattern>
+                <charset>utf8</charset>
+            </encoder>
+        </appender>
+
+        <logger name="com.teamplay" level="ALL"/>
+        <logger name="org.hibernate.SQL" level="INFO"/>
+
+        <root level="WARN">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="!local">
+        <appender name="ENCODER" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+            <destination>fonnie.shop:5000</destination>
+            <keepAliveDuration>5 minutes</keepAliveDuration>
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <customFields>{"app_name":"${APP_NAME}"}</customFields>
+                <customFields>{"index":"spring"}</customFields>
+            </encoder>
+        </appender>
+
+        <root level="WARN">
+            <appender-ref ref="ENCODER"/>
+        </root>
+    </springProfile>
+
+
+    <logger name="com.teamplay" level="DEBUG"/>
+    <logger name="org.apache" level="WARN"/>
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.hibernate.SQL" level="WARN"/>
+    <logger name="org.hibernate.type" level="WARN"/>
+    <logger name="org.hibernate.engine.query" level="WARN"/>
+    <logger name="org.hibernate.jdbc" level="WARN"/>
+
+</configuration>
