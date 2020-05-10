@@ -59,7 +59,7 @@ class ClubService @Autowired constructor(
     }
 
     // ToDo : 현재 임시 데이터로 ~~Item을 반환중임, 리턴타입 모두 추후 수정 해야 함
-    fun findClub(clubId: Long): ClubResponse{
+    fun findClubAndFeed(clubId: Long): ClubResponse{
         checkExistClub.verify(clubId)
         val members = clubMemberToUserInfo(findClubMembers(clubId))
         val admins = clubAdminToUserInfo(findClubAdmins(clubId))
@@ -73,6 +73,7 @@ class ClubService @Autowired constructor(
         teamMainFeedItems.add(TeamMainFeedItem(0,null,noticeItem1))
         teamMainFeedItems.add(TeamMainFeedItem(1,resultItem,null))
         teamMainFeedItems.add(TeamMainFeedItem(1,resultItem2,null))
+
         return ClubResponse(
             tag = club.tags[0],
             name = club.name,

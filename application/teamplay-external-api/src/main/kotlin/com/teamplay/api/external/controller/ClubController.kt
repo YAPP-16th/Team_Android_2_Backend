@@ -46,7 +46,7 @@ class ClubController {
     @ResponseStatus(HttpStatus.OK)
     fun getClub(@PathVariable clubId: Long): ClubResponse {
         // 동호회 목록 페이징 처리하여 리턴할지 고민.
-        return clubService.findClub(clubId)
+        return clubService.findClubAndFeed(clubId)
     }
 
 //    @ApiOperation(value = "가입한 동호회 리스트")
