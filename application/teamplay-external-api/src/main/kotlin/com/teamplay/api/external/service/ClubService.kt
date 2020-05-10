@@ -58,7 +58,7 @@ class ClubService @Autowired constructor(
         return registerMember(ClubMember(null, club, user))
     }
 
-    // ToDo : 현재 임시 데이터로 ~~Item을 반환중임, 리턴타입 모두 추후 수정 해야 함
+    // ToDo : 현재 임시 데이터 반환중임, 피드정보 모두 추후 수정 해야 함
     fun findClubAndFeed(clubId: Long): ClubResponse{
         checkExistClub.verify(clubId)
         val members = clubMemberToUserInfo(findClubMembers(clubId))
