@@ -66,22 +66,24 @@ class ClubService @Autowired constructor(
         val club = findClubById(clubId)
 
         // 가데이터 생성
-        val noticeItem1 = NoticeItem(club.name+" 모집 공고", club.createTeamDate, "저희는 소중한 팀플레이어를 구합니다.")
-        val resultItem = ResultItem("테스트팀",club.createTeamDate, true)
-        val resultItem2 = ResultItem("테스트팀",club.createTeamDate, false)
-        val teamMainFeedItems = mutableListOf<TeamMainFeedItem>()
-        teamMainFeedItems.add(TeamMainFeedItem(0,null,noticeItem1))
-        teamMainFeedItems.add(TeamMainFeedItem(1,resultItem,null))
-        teamMainFeedItems.add(TeamMainFeedItem(1,resultItem2,null))
+        val noticeItem1 = SimpleNoticeInfo(club.name+" 모집 공고", club.createTeamDate, "저희는 소중한 팀플레이어를 구합니다.")
+        val resultItem = SimpleResultInfo("테스트팀",club.createTeamDate, true)
+        val resultItem2 = SimpleResultInfo("테스트팀",club.createTeamDate, false)
+        val simpleFeeds = mutableListOf<SimpleFeeds>()
+        simpleFeeds.add(SimpleFeeds(0,null,noticeItem1))
+        simpleFeeds.add(SimpleFeeds(1,resultItem,null))
+        simpleFeeds.add(SimpleFeeds(1,resultItem2,null))
 
         return ClubResponse(
-            tag = club.tags[0],
-            name = club.name,
-            address = club.location,
-            createDate = club.createTeamDate,
-            memberCount = members.size,
+            SimpleClubInfo(
+                tag = club.tags[0],
+                name = club.name,
+                location = club.location,
+                createDate = club.createTeamDate,
+                memberCount = members.size
+            ),
             feedCount = 3,
-            feedItems = teamMainFeedItems
+            simpleFeeds = simpleFeeds
         )
     }
 
