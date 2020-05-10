@@ -44,7 +44,7 @@ class ClubController {
     @ApiOperation(value = "동호회 정보")
     @GetMapping("/{clubId}")
     @ResponseStatus(HttpStatus.OK)
-    fun getClub(@PathVariable clubId: Long): ClubResponse {
+    fun getClubAndFeeds(@PathVariable clubId: Long): ClubResponse {
         // 동호회 목록 페이징 처리하여 리턴할지 고민.
         return clubService.findClubAndFeed(clubId)
     }
