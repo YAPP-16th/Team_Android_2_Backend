@@ -8,6 +8,7 @@ import com.teamplay.api.com.teamplay.api.external.response.ClubJoinInfoResponse
 import com.teamplay.api.com.teamplay.api.external.response.CreateClubResponse
 import com.teamplay.api.com.teamplay.api.external.service.AuthService
 import com.teamplay.api.com.teamplay.api.external.service.ClubService
+import com.teamplay.domain.database.club.entity.ClubCharacter
 import io.swagger.annotations.ApiOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -89,6 +90,14 @@ class ClubController {
     fun getClubJoinInfo(@PathVariable clubId: Long): ClubJoinInfoResponse {
 
         return clubService.findClubJoinInfo(clubId)
+    }
+
+    @ApiOperation(value = "동호회 성격 정보 얻기")
+    @GetMapping("/characters")
+    @ResponseStatus(HttpStatus.OK)
+    fun getClubCharacters(): List<ClubCharacter> {
+
+        return ClubCharacter.values().asList()
     }
 
     @ApiOperation(value = "동호회에 속한 멤버 상태 변경")
