@@ -2,6 +2,7 @@ package com.teamplay.domain.business.club.dto
 
 import com.teamplay.domain.database.club.entity.Category
 import com.teamplay.domain.database.club.entity.Club
+import com.teamplay.domain.database.club.entity.ClubCharacter
 import com.teamplay.domain.database.user.entity.Ability
 import java.util.*
 
@@ -18,7 +19,7 @@ class ClubInfo constructor(
     val createDate: Date,
     val updateDate: Date,
     val createTeamDate: String,
-    val tags: MutableList<String>,
+    val characters: MutableList<ClubCharacter>,
     val questions: MutableList<String>
 ){
     constructor(club: Club): this(
@@ -34,7 +35,7 @@ class ClubInfo constructor(
         club.createdDate,
         club.updatedDate!!,
         club.createTeamDate,
-        club.tags,
+        club.characters,
         club.questions
     )
 }

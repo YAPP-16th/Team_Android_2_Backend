@@ -1,6 +1,7 @@
 package com.teamplay.api.com.teamplay.api.external.request
 
 import com.teamplay.domain.database.club.entity.Category
+import com.teamplay.domain.database.club.entity.ClubCharacter
 import com.teamplay.domain.database.user.entity.Ability
 
 data class CreateClubRequest(
@@ -13,6 +14,6 @@ data class CreateClubRequest(
     val introduce: String? = null,
     val contact: String? = null,
     val createTeamDate: String,
-    val tags: MutableList<String>,
+    val characters: MutableList<ClubCharacter>,
     val questions: MutableList<String>
 )

@@ -45,7 +45,7 @@ data class Club(
     var updatedDate: Date? = null,
 
     @ElementCollection
-    val tags: MutableList<String> = mutableListOf<String>(),
+    val characters: MutableList<ClubCharacter> = mutableListOf<ClubCharacter>(),
 
     @ElementCollection
     val questions: MutableList<String> = mutableListOf<String>(),

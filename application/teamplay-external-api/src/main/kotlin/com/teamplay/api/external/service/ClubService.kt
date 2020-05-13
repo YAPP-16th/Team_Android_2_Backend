@@ -77,7 +77,7 @@ class ClubService @Autowired constructor(
 
         return ClubResponse(
             SimpleClubInfo(
-                tag = club.tags[0],
+                characters = club.characters,
                 name = club.name,
                 location = club.location,
                 createDate = club.createTeamDate,
@@ -95,7 +95,7 @@ class ClubService @Autowired constructor(
 
         return ClubJoinInfoResponse(
             SimpleClubInfo(
-                tag = club.tags[0],
+                characters = club.characters,
                 name = club.name,
                 location = club.location,
                 createDate = club.createTeamDate,
@@ -154,7 +154,7 @@ class ClubService @Autowired constructor(
             contact = createClubRequest.contact,
             createdDate = Date(),
             createTeamDate = createClubRequest.createTeamDate,
-            tags = createClubRequest.tags,
+            characters = createClubRequest.characters,
             questions = createClubRequest.questions
         )
     }
