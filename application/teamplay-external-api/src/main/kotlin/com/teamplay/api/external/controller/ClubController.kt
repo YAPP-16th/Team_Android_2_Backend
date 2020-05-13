@@ -4,7 +4,7 @@ import com.teamplay.api.com.teamplay.api.external.request.CreateClubRequest
 import com.teamplay.api.com.teamplay.api.external.request.GetClubsRequest
 import com.teamplay.api.com.teamplay.api.external.response.ClubResponse
 import com.teamplay.api.com.teamplay.api.external.response.ClubsResponse
-import com.teamplay.api.com.teamplay.api.external.response.CreateClubInfoResponse
+import com.teamplay.api.com.teamplay.api.external.response.ClubJoinInfoResponse
 import com.teamplay.api.com.teamplay.api.external.response.CreateClubResponse
 import com.teamplay.api.com.teamplay.api.external.service.AuthService
 import com.teamplay.api.com.teamplay.api.external.service.ClubService
@@ -50,14 +50,6 @@ class ClubController {
         return clubService.findClubAndFeed(clubId)
     }
 
-    @ApiOperation(value = "동호회 생성 정보")
-    @GetMapping("/create/{clubId}")
-    @ResponseStatus(HttpStatus.OK)
-    fun getCreateClubInfo(@PathVariable clubId: Long): CreateClubInfoResponse {
-
-        return clubService.findCreateClubInfo(clubId)
-    }
-
     @ApiOperation(value = "가입한 동호회 리스트")
     @GetMapping("/users/{userId}")
     fun getJoinedClub(@PathVariable userId: Long): String {
@@ -88,6 +80,15 @@ class ClubController {
     fun joinClubRequest(): String {
         // 가입 요청했을 경우, 우선 동호회 테이블에 유저 추가하고 type 으로 가입 대기|멤버|탈퇴 enum 으로 만들고 save 하나만 뚫어두면 좋을거같습니다.
         return "동호회 가입 요청"
+    }
+
+
+    @ApiOperation(value = "동호회 생성 정보")
+    @GetMapping("/join/{clubId}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getClubJoinInfo(@PathVariable clubId: Long): ClubJoinInfoResponse {
+
+        return clubService.findClubJoinInfo(clubId)
     }
 
     @ApiOperation(value = "동호회에 속한 멤버 상태 변경")
