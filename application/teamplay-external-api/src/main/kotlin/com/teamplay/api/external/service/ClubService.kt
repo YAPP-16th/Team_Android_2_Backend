@@ -4,6 +4,7 @@ import com.teamplay.api.com.teamplay.api.external.request.CreateClubRequest
 import com.teamplay.api.com.teamplay.api.external.request.GetClubsRequest
 import com.teamplay.api.com.teamplay.api.external.response.ClubResponse
 import com.teamplay.api.com.teamplay.api.external.response.ClubsResponse
+import com.teamplay.api.com.teamplay.api.external.response.CreateClubInfoResponse
 import com.teamplay.api.com.teamplay.api.external.response.CreateClubResponse
 import com.teamplay.domain.business.club.dto.*
 import com.teamplay.domain.business.club.function.*
@@ -84,6 +85,23 @@ class ClubService @Autowired constructor(
             ),
             feedCount = 3,
             simpleFeeds = simpleFeeds
+        )
+    }
+
+    fun findCreateClubInfo(clubId: Long): CreateClubInfoResponse{
+        checkExistClub.verify(clubId)
+        val members = clubMemberToUserInfo(findClubMembers(clubId))
+        val club = findClubById(clubId)
+
+        return CreateClubInfoResponse(
+            SimpleClubInfo(
+                tag = club.tags[0],
+                name = club.name,
+                location = club.location,
+                createDate = club.createTeamDate,
+                memberCount = members.size
+            ),
+            club.questions
         )
     }
 

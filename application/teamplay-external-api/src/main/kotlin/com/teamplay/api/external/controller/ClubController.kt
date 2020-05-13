@@ -4,6 +4,7 @@ import com.teamplay.api.com.teamplay.api.external.request.CreateClubRequest
 import com.teamplay.api.com.teamplay.api.external.request.GetClubsRequest
 import com.teamplay.api.com.teamplay.api.external.response.ClubResponse
 import com.teamplay.api.com.teamplay.api.external.response.ClubsResponse
+import com.teamplay.api.com.teamplay.api.external.response.CreateClubInfoResponse
 import com.teamplay.api.com.teamplay.api.external.response.CreateClubResponse
 import com.teamplay.api.com.teamplay.api.external.service.AuthService
 import com.teamplay.api.com.teamplay.api.external.service.ClubService
@@ -49,11 +50,19 @@ class ClubController {
         return clubService.findClubAndFeed(clubId)
     }
 
-//    @ApiOperation(value = "가입한 동호회 리스트")
-//    @GetMapping("/{userId}")
-//    fun getJoinedClub(@PathVariable userId: Long): String {
-//        return "가입한 동호회 리스트"
-//    }
+    @ApiOperation(value = "동호회 생성 정보")
+    @GetMapping("/create/{clubId}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getCreateClubInfo(@PathVariable clubId: Long): CreateClubInfoResponse {
+
+        return clubService.findCreateClubInfo(clubId)
+    }
+
+    @ApiOperation(value = "가입한 동호회 리스트")
+    @GetMapping("/users/{userId}")
+    fun getJoinedClub(@PathVariable userId: Long): String {
+        return "가입한 동호회 리스트"
+    }
 
     @ApiOperation(value = "추천 동호회 리스트")
     @GetMapping("/recommendation")
