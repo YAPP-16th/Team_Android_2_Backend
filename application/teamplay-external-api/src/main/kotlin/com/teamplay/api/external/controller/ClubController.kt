@@ -84,7 +84,7 @@ class ClubController {
     }
 
 
-    @ApiOperation(value = "동호회 생성 정보")
+    @ApiOperation(value = "동호회 가입 정보 얻기")
     @GetMapping("/join/{clubId}")
     @ResponseStatus(HttpStatus.OK)
     fun getClubJoinInfo(@PathVariable clubId: Long): ClubJoinInfoResponse {
