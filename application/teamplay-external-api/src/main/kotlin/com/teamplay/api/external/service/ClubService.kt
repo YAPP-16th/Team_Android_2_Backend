@@ -13,6 +13,7 @@ import com.teamplay.domain.business.club.validator.CheckExistClub
 import com.teamplay.domain.business.user.dto.UserInfo
 import com.teamplay.domain.database.club.entity.Club
 import com.teamplay.domain.database.club.entity.ClubAdmin
+import com.teamplay.domain.database.club.entity.ClubCharacter
 import com.teamplay.domain.database.club.entity.ClubMember
 import com.teamplay.domain.database.jpa.club.repository.ClubAdminRepository
 import com.teamplay.domain.database.jpa.club.repository.ClubMemberRepository
@@ -35,12 +36,13 @@ class ClubService @Autowired constructor(
     private val findClubsByName = FindClubsByName(clubRepository)
     private val findClubMembersByClubId = FindClubMembersByClubId(clubMemberRepository)
     private val findClubAdminsByClubId = FindClubAdminsByClubId(clubAdminRepository)
+    private val findClubsByAddress = FindClubsByAddress(clubRepository)
+    private val findClubsByCharacters = FindClubsByCharacters(clubRepository)
 
-    private val checkDuplicateClubName = CheckDuplicateClubName(clubRepository)
     private val checkExistClub = CheckExistClub(clubRepository)
 
     fun registerClub(createClubRequest: CreateClubRequest, user: User): CreateClubResponse{
-        checkDuplicateClubName.verify(createClubRequest.name)
+
         var club = createClub(requestToClub(createClubRequest))
         club.admin.add(registerAdminInClub(user, club))
         club.members.add(registerMemberClub(user,club))
@@ -113,9 +115,32 @@ class ClubService @Autowired constructor(
         return findClubAdminsByClubId(clubId)
     }
 
-    fun findClubInfosByName(getClubsRequest: GetClubsRequest): ClubsResponse{
-        val clubsPage = findClubsByName(NameAndPage(getClubsRequest.name, getClubsRequest.currentPage))
+    fun findClubInfosByName(name: String, getClubsRequest: GetClubsRequest): ClubsResponse{
+        val clubsPage = findClubsByName(NameAndPage(name, getClubsRequest.currentPage))
         val clubs = clubsPage.content
+
+        return ClubsResponse(
+            clubsToClubInfos(clubs),
+            clubsPage.totalPages,
+            clubsPage.number
+        )
+    }
+
+    fun findClubInfosByAddress(address: String, getClubsRequest: GetClubsRequest): ClubsResponse{
+        val clubsPage = findClubsByAddress(NameAndPage(address, getClubsRequest.currentPage))
+        val clubs = clubsPage.content
+
+        return ClubsResponse(
+            clubsToClubInfos(clubs),
+            clubsPage.totalPages,
+            clubsPage.number
+        )
+    }
+
+    fun findClubInfosByCharacters(characters: List<ClubCharacter>, getClubsRequest: GetClubsRequest): ClubsResponse{
+        val clubsPage = findClubsByCharacters(CharactersAndPage(characters, getClubsRequest.currentPage))
+        val clubs = clubsPage.content
+
         return ClubsResponse(
             clubsToClubInfos(clubs),
             clubsPage.totalPages,

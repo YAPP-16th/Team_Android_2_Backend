@@ -35,12 +35,29 @@ class ClubController {
         return clubService.registerClub(createClubRequest, user)
     }
 
-    @ApiOperation(value = "동호회 목록 정보")
-    @GetMapping
+    @ApiOperation(value = "동호회 이름으로 검색")
+    @GetMapping("/names/{name}")
     @ResponseStatus(HttpStatus.OK)
-    fun getClubs(getClubsRequest: GetClubsRequest): ClubsResponse {
+    fun getClubsByName(@PathVariable name: String, getClubsRequest: GetClubsRequest): ClubsResponse {
 
-        return clubService.findClubInfosByName(getClubsRequest)
+        return clubService.findClubInfosByName(name, getClubsRequest)
+    }
+
+    @ApiOperation(value = "동호회 주소로 검색")
+    @GetMapping("/addresses/{address}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getClubsByAddress(@PathVariable address: String, getClubsRequest: GetClubsRequest): ClubsResponse {
+
+        return clubService.findClubInfosByAddress(address, getClubsRequest)
+    }
+
+    @ApiOperation(value = "동호회 성격으로 검색")
+    @GetMapping("/characters/")
+    @ResponseStatus(HttpStatus.OK)
+    fun getClubsByCharacters(characters: Array<ClubCharacter>, getClubsRequest: GetClubsRequest): ClubsResponse {
+        println("---------characater list-------------")
+        println(characters.asList())
+        return clubService.findClubInfosByCharacters(characters.asList(), getClubsRequest)
     }
 
     @ApiOperation(value = "동호회 정보")
@@ -60,7 +77,7 @@ class ClubController {
     }
 
     @ApiOperation(value = "동호회 성격 정보 얻기")
-    @GetMapping("/characters")
+    @GetMapping("/characters/infos")
     @ResponseStatus(HttpStatus.OK)
     fun getClubCharacters(): List<ClubCharacter> {
 
