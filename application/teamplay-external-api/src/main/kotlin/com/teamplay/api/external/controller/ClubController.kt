@@ -4,9 +4,11 @@ import com.teamplay.api.com.teamplay.api.external.request.CreateClubRequest
 import com.teamplay.api.com.teamplay.api.external.request.GetClubsRequest
 import com.teamplay.api.com.teamplay.api.external.response.ClubResponse
 import com.teamplay.api.com.teamplay.api.external.response.ClubsResponse
+import com.teamplay.api.com.teamplay.api.external.response.ClubJoinInfoResponse
 import com.teamplay.api.com.teamplay.api.external.response.CreateClubResponse
 import com.teamplay.api.com.teamplay.api.external.service.AuthService
 import com.teamplay.api.com.teamplay.api.external.service.ClubService
+import com.teamplay.domain.database.club.entity.ClubCharacter
 import io.swagger.annotations.ApiOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -47,5 +49,21 @@ class ClubController {
     fun getClubAndFeeds(@PathVariable clubId: Long): ClubResponse {
 
         return clubService.findClubAndFeed(clubId)
+    }
+  
+    @ApiOperation(value = "동호회 가입 정보 얻기")
+    @GetMapping("/join/{clubId}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getClubJoinInfo(@PathVariable clubId: Long): ClubJoinInfoResponse {
+
+        return clubService.findClubJoinInfo(clubId)
+    }
+
+    @ApiOperation(value = "동호회 성격 정보 얻기")
+    @GetMapping("/characters")
+    @ResponseStatus(HttpStatus.OK)
+    fun getClubCharacters(): List<ClubCharacter> {
+
+        return ClubCharacter.values().asList()
     }
 }
