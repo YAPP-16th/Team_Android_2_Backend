@@ -1,8 +1,8 @@
 package com.teamplay.api.com.teamplay.api.external.controller
 
 import com.teamplay.api.com.teamplay.api.external.config.baseUrl
-import com.teamplay.api.com.teamplay.api.external.response.MatchScheduleResponse
 import com.teamplay.api.com.teamplay.api.external.service.MatchService
+import com.teamplay.domain.business.match.dto.MatchScheduleResponse
 import com.teamplay.domain.database.jpa.match.repository.spec.MatchSpecs
 import com.teamplay.domain.database.match.entity.Match
 import com.teamplay.domain.database.match.entity.MatchRequest
