@@ -16,7 +16,7 @@ interface MatchRepository : JpaRepository<Match, Long>, JpaSpecificationExecutor
         from Match m 
         WHERE m.matchStatus = com.teamplay.domain.database.match.entity.MatchRequestStatus.ACCEPT
         AND m.home = :homeClub
-        AND m.startTime > sysdate - 30/(24*60)
+        AND m.startTime BETWEEN CURRENT_DATE AND sysdate + 30/(24*60)
         ORDER BY m.startTime DESC
     """)
     fun findAllAcceptMatch(homeClub: Long): MutableList<Match>

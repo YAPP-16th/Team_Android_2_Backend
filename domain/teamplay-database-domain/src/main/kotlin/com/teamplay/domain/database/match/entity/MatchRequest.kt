@@ -15,7 +15,6 @@ data class MatchRequest(
     override val id: Long?,
 
     @OneToOne
-    @Column(nullable = false)
     val requester: Club,
 
     @Enumerated(EnumType.STRING)

@@ -14,7 +14,6 @@ data class Match(
     override val id: Long?,
 
     @OneToOne
-    @Column(nullable = false)
     val home: Club,
 
     @OneToOne
