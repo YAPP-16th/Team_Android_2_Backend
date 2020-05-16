@@ -43,5 +43,8 @@ data class Club(
     var updatedDate: Date? = null,
 
     @OneToMany(mappedBy = "club")
-    var members: MutableList<ClubMember> = mutableListOf<ClubMember>()
+    var members: MutableList<ClubMember> = mutableListOf(),
+
+    @OneToMany(mappedBy = "club")
+    var admins: MutableList<ClubAdmin> = mutableListOf()
 ): EntityId
