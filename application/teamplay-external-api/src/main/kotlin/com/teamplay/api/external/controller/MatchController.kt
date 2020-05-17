@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*
 class MatchController (
         private val matchService: MatchService
 ) {
-
     @ApiOperation(value = "매칭 게시글 보기")
     @GetMapping
     fun find(@ModelAttribute specs: MatchSpecs): Page<Match> {
@@ -52,3 +51,4 @@ class MatchController (
         return matchService.responseMatchRequest(matchRequest)
     }
 }
+

@@ -1,6 +1,7 @@
 package com.teamplay.domain.database.user.entity
 
 import com.teamplay.core.database.EntityId
+import com.teamplay.domain.database.club.entity.ClubAdmin
 import com.teamplay.domain.database.club.entity.ClubMember
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
@@ -48,6 +49,9 @@ data class User(
     var updatedDate: Date? = null,
 
     @OneToMany(mappedBy = "user")
-    var clubs: MutableList<ClubMember> = mutableListOf()
+    var memberClubs: MutableList<ClubMember> = mutableListOf<ClubMember>(),
+
+    @OneToMany(mappedBy = "user")
+    var adminClubs: MutableList<ClubAdmin> = mutableListOf<ClubAdmin>()
 
 ): EntityId

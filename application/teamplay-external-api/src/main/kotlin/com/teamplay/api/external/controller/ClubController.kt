@@ -1,69 +1,85 @@
 package com.teamplay.api.com.teamplay.api.external.controller
 
+import com.teamplay.api.com.teamplay.api.external.request.CreateClubRequest
+import com.teamplay.api.com.teamplay.api.external.request.GetClubsRequest
+import com.teamplay.api.com.teamplay.api.external.response.ClubResponse
+import com.teamplay.api.com.teamplay.api.external.response.ClubsResponse
+import com.teamplay.api.com.teamplay.api.external.response.ClubJoinInfoResponse
+import com.teamplay.api.com.teamplay.api.external.response.CreateClubResponse
+import com.teamplay.api.com.teamplay.api.external.service.AuthService
+import com.teamplay.api.com.teamplay.api.external.service.ClubService
+import com.teamplay.domain.database.club.entity.ClubCharacter
 import io.swagger.annotations.ApiOperation
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/clubs")
 class ClubController {
+    @Autowired
+    private lateinit var authService: AuthService
 
-    @ApiOperation(value = "동호회 목록 정보")
-    @GetMapping
-    fun find(): String {
-        // 동호회 목록 페이징 처리하여 리턴할지 고민.
-        // 찾기도 여기로 검색
-        // spec 정의해서
-        return "동호회 목록 정보"
-    }
-
-    @ApiOperation(value = "동호회 상세 정보")
-    @GetMapping("/{id}")
-    fun get(@PathVariable id: Long): String {
-        // 동호회 목록 페이징 처리하여 리턴할지 고민.
-        return "동호회 상세 정보"
-    }
-
-    @ApiOperation(value = "가입한 동호회 리스트")
-    @GetMapping("/{userId}")
-    fun getJoinedClub(@PathVariable userId: Long): String {
-        return "가입한 동호회 리스트"
-    }
-
-    @ApiOperation(value = "추천 동호회 리스트")
-    @GetMapping("/recommendation")
-    fun recommendationClub(): String {
-        // 동호회 추천 알고리즘 고민 필요
-        return "추천 동호회 리스트"
-    }
-
-    @ApiOperation(value = "동호회 뉴스피드")
-    @GetMapping("/feed")
-    fun getNewsFeed(): String {
-        return "동호회 뉴스피드"
-    }
+    @Autowired
+    private lateinit var clubService: ClubService
 
     @ApiOperation(value = "동호회 생성")
     @PostMapping
-    fun save(): String {
-        return "동호회 생성"
+    @ResponseStatus(HttpStatus.CREATED)
+    fun registerClub(
+        @Valid @RequestHeader(required = false) accessToken: String,
+        @RequestBody createClubRequest: CreateClubRequest
+    ): CreateClubResponse {
+        val user = authService.getUserByAccessToken(accessToken)
+        return clubService.registerClub(createClubRequest, user)
     }
 
-    @ApiOperation(value = "피드 생성")
-    @PostMapping("/feed")
-    fun createFeed(): String {
-        return "피드 생성"
+    @ApiOperation(value = "동호회 이름으로 검색")
+    @GetMapping("/names/{name}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getClubsByName(@PathVariable name: String, getClubsRequest: GetClubsRequest): ClubsResponse {
+
+        return clubService.findClubInfosByName(name, getClubsRequest)
     }
 
-    @ApiOperation(value = "동호회 가입 요청")
-    @PostMapping("/join")
-    fun joinClubRequest(): String {
-        // 가입 요청했을 경우, 우선 동호회 테이블에 유저 추가하고 type 으로 가입 대기|멤버|탈퇴 enum 으로 만들고 save 하나만 뚫어두면 좋을거같습니다.
-        return "동호회 가입 요청"
+    @ApiOperation(value = "동호회 주소로 검색")
+    @GetMapping("/addresses/{address}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getClubsByAddress(@PathVariable address: String, getClubsRequest: GetClubsRequest): ClubsResponse {
+
+        return clubService.findClubInfosByAddress(address, getClubsRequest)
     }
 
-    @ApiOperation(value = "동호회에 속한 멤버 상태 변경")
-    @PutMapping("/{id}")
-    fun updateClubMember(@PathVariable id: Long): String {
-        return "동호회에 속한 멤버 상태 변경"
+    @ApiOperation(value = "동호회 성격으로 검색")
+    @GetMapping("/characters/")
+    @ResponseStatus(HttpStatus.OK)
+    fun getClubsByCharacters(characters: Array<ClubCharacter>, getClubsRequest: GetClubsRequest): ClubsResponse {
+
+        return clubService.findClubInfosByCharacters(characters.asList(), getClubsRequest)
+    }
+
+    @ApiOperation(value = "동호회 정보")
+    @GetMapping("/{clubId}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getClubAndFeeds(@PathVariable clubId: Long): ClubResponse {
+
+        return clubService.findClubAndFeed(clubId)
+    }
+  
+    @ApiOperation(value = "동호회 가입 정보 얻기")
+    @GetMapping("/join/{clubId}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getClubJoinInfo(@PathVariable clubId: Long): ClubJoinInfoResponse {
+
+        return clubService.findClubJoinInfo(clubId)
+    }
+
+    @ApiOperation(value = "동호회 성격 정보 얻기")
+    @GetMapping("/characters/infos")
+    @ResponseStatus(HttpStatus.OK)
+    fun getClubCharacters(): List<ClubCharacter> {
+
+        return ClubCharacter.values().asList()
     }
 }
