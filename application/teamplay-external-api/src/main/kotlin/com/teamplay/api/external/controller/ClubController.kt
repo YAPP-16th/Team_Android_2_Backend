@@ -55,8 +55,7 @@ class ClubController {
     @GetMapping("/characters/")
     @ResponseStatus(HttpStatus.OK)
     fun getClubsByCharacters(characters: Array<ClubCharacter>, getClubsRequest: GetClubsRequest): ClubsResponse {
-        println("---------characater list-------------")
-        println(characters.asList())
+
         return clubService.findClubInfosByCharacters(characters.asList(), getClubsRequest)
     }
 
