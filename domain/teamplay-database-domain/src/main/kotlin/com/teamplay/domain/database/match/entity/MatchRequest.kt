@@ -1,7 +1,10 @@
 package com.teamplay.domain.database.match.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.teamplay.core.database.EntityId
 import com.teamplay.domain.database.club.entity.Club
+import org.hibernate.annotations.CreationTimestamp
+import java.util.*
 import javax.persistence.*
 
 @Entity
@@ -12,10 +15,21 @@ data class MatchRequest(
     override val id: Long?,
 
     @OneToOne
-    @JoinColumn(name = "match_id")
-    var match: Match,
+    val requester: Club,
 
-    @OneToOne
-    @JoinColumn(name = "requester_id")
-    var requester: Club
-    ): EntityId
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    var matchRequestStatus: MatchRequestStatus = MatchRequestStatus.WAITING,
+
+    @CreationTimestamp
+    @Column(nullable = false)
+    val createdDate: Date? = Date(),
+
+    @CreationTimestamp
+    @Column(nullable = false)
+    val modifiedDate: Date? = Date()
+): EntityId {
+    @JsonIgnore
+    @ManyToOne
+    lateinit var match: Match
+}

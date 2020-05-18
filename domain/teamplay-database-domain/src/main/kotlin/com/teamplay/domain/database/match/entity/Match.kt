@@ -5,7 +5,6 @@ import com.teamplay.domain.database.club.entity.Club
 import org.hibernate.annotations.CreationTimestamp
 import java.util.*
 import javax.persistence.*
-import kotlin.random.Random
 
 @Entity
 @Table(name = "matches")
@@ -15,28 +14,46 @@ data class Match(
     override val id: Long?,
 
     @OneToOne
-    @JoinColumn(name = "home_id")
-    var home: Club? = null,
+    val home: Club,
 
     @OneToOne
-    @JoinColumn(name = "away_id")
-    var away: Club? = null,
+    val away: Club? = null,
 
-    var location: String,
+    @Column(nullable = false)
+    val location: String,
 
-    var startTime: Date,
+    @Column(nullable = false)
+    val startTime: Date,
 
-    var endTime: Date,
+    @Column(nullable = false)
+    val endTime: Date,
 
-    var homeScore: Int,
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    val matchStyle: MatchStyle,
 
-    var awayScore: Int,
+    val homeScore: Int? = null,
+
+    val awayScore: Int? = null,
+
+    @Enumerated(EnumType.STRING)
+    var matchStatus: MatchStatus = MatchStatus.WAITING,
+
+    @OneToMany(mappedBy = "match", cascade = [CascadeType.PERSIST, CascadeType.MERGE])
+    val matchRequests: MutableList<MatchRequest>? = mutableListOf(),
 
     @OneToOne
     @JoinColumn(name = "winner_id")
-    var winner: Club? = null,
+    val winner: Club? = null,
 
     @CreationTimestamp
-    @Column(nullable = false)
-    val createdDate: Date
-): EntityId
+    val createdDate: Date? = Date(),
+
+    @CreationTimestamp
+    val modifiedDate: Date? = Date()
+): EntityId {
+    fun prepareForSave(): Match {
+        this.matchRequests?.forEach { it.match = this }
+        return this
+    }
+}
