@@ -1,4 +1,4 @@
-package com.teamplay.domain.business.match.dto
+package com.teamplay.api.com.teamplay.api.external.response
 
 import com.teamplay.domain.database.match.entity.Match
 import com.teamplay.domain.database.match.entity.MatchRequest
