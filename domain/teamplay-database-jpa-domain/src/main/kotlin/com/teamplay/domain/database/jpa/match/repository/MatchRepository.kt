@@ -22,7 +22,7 @@ interface MatchRepository : JpaRepository<Match, Long>, JpaSpecificationExecutor
     fun findAllAcceptMatch(homeClubId: Long): MutableList<Match>
 
     @Query("""
-        SELECT COUNT(m) > 0 
+        SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END 
         FROM Match m
         WHERE m.id = :matchId
         AND m.matchStatus = com.teamplay.domain.database.match.entity.MatchStatus.WAITING
