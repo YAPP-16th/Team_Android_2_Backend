@@ -8,5 +8,8 @@ import java.util.*
 
 @Repository
 interface ClubMemberRepository : ExtendedRepository<ClubMember> {
+
     fun findAllByClubId(clubId: Long): MutableList<ClubMember>
+
+    fun existsByClub_IdAndUser_Id(clubId: Long, userId: Long): Boolean
 }

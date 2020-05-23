@@ -2,15 +2,18 @@ package com.teamplay.api.com.teamplay.api.external.service
 
 import com.teamplay.api.com.teamplay.api.external.request.CreateClubRequest
 import com.teamplay.api.com.teamplay.api.external.request.GetClubsRequest
+import com.teamplay.api.com.teamplay.api.external.request.JoinClubRequest
 import com.teamplay.api.com.teamplay.api.external.response.ClubResponse
 import com.teamplay.api.com.teamplay.api.external.response.ClubsResponse
 import com.teamplay.api.com.teamplay.api.external.response.ClubJoinInfoResponse
 import com.teamplay.api.com.teamplay.api.external.response.CreateClubResponse
 import com.teamplay.domain.business.club.dto.*
+import com.teamplay.domain.business.club.error.ClubIsNotExistError
 import com.teamplay.domain.business.club.function.*
-import com.teamplay.domain.business.club.validator.CheckDuplicateClubName
+import com.teamplay.domain.business.club.validator.CheckAlreadyRegisteredClub
 import com.teamplay.domain.business.club.validator.CheckExistClub
 import com.teamplay.domain.business.user.dto.UserInfo
+import com.teamplay.domain.business.user.function.FindUserById
 import com.teamplay.domain.database.club.entity.Club
 import com.teamplay.domain.database.club.entity.ClubAdmin
 import com.teamplay.domain.database.club.entity.ClubCharacter
@@ -18,6 +21,7 @@ import com.teamplay.domain.database.club.entity.ClubMember
 import com.teamplay.domain.database.jpa.club.repository.ClubAdminRepository
 import com.teamplay.domain.database.jpa.club.repository.ClubMemberRepository
 import com.teamplay.domain.database.jpa.club.repository.ClubRepository
+import com.teamplay.domain.database.jpa.user.repository.UserRepository
 import com.teamplay.domain.database.user.entity.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -27,7 +31,8 @@ import java.util.*
 class ClubService @Autowired constructor(
     clubRepository: ClubRepository,
     clubAdminRepository: ClubAdminRepository,
-    clubMemberRepository: ClubMemberRepository
+    clubMemberRepository: ClubMemberRepository,
+    userRepository: UserRepository
 ){
     private val findClubById = FindClubById(clubRepository)
     private val createClub = CreateClub(clubRepository)
@@ -38,8 +43,18 @@ class ClubService @Autowired constructor(
     private val findClubAdminsByClubId = FindClubAdminsByClubId(clubAdminRepository)
     private val findClubsByAddress = FindClubsByAddress(clubRepository)
     private val findClubsByCharacters = FindClubsByCharacters(clubRepository)
+    private val findUserById = FindUserById(userRepository)
 
     private val checkExistClub = CheckExistClub(clubRepository)
+    private val checkAlreadyRegisterMember = CheckAlreadyRegisteredClub(clubMemberRepository)
+
+    fun joinClub(joinClubRequest: JoinClubRequest): ClubResponse{
+        val user = findUserById(joinClubRequest.userId)
+        val club = findClubById(joinClubRequest.clubId)
+        val clubMember = registerMemberClub(user, club)
+
+        return findClubAndFeed(clubMember.club.id!!);
+    }
 
     fun registerClub(createClubRequest: CreateClubRequest, user: User): CreateClubResponse{
 
@@ -58,6 +73,7 @@ class ClubService @Autowired constructor(
     }
 
     fun registerMemberClub(user: User, club: Club): ClubMember {
+        checkAlreadyRegisterMember.verify(ClubIdAndUserId(club.id!!, user.id!!));
         return registerMember(ClubMember(null, club, user))
     }
 
