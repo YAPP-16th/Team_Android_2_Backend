@@ -8,8 +8,6 @@ class GetMatchById(
     private val matchRepository: MatchRepository
 ): Function<Long, Match> {
     override fun apply(id: Long): Match {
-
         return matchRepository.findById(id).get()
     }
-
 }

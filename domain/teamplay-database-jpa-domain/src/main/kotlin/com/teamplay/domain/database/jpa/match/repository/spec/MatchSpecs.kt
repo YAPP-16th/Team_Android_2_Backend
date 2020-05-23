@@ -8,10 +8,10 @@ import java.util.*
 import javax.persistence.criteria.Predicate
 
 data class MatchSpecs(
-        override val descending: Boolean = false,
+        override val descending: Boolean = true,
         override val page: Int = 1,
         override val rowsPerPage: Int = 10,
-        override val sortBy: String? = "createdDate",
+        override val sortBy: String? = "id",
         override val isAll: Boolean = false,
 
         val startTime: Date? = null,

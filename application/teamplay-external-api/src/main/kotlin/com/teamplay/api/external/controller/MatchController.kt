@@ -1,13 +1,14 @@
 package com.teamplay.api.com.teamplay.api.external.controller
 
 import com.teamplay.api.com.teamplay.api.external.config.baseUrl
+import com.teamplay.api.com.teamplay.api.external.response.MatchListResponse
 import com.teamplay.api.com.teamplay.api.external.response.MatchScheduleResponse
 import com.teamplay.api.com.teamplay.api.external.service.MatchService
+import com.teamplay.domain.business.match.dto.MatchInfo
 import com.teamplay.domain.database.jpa.match.repository.spec.MatchSpecs
 import com.teamplay.domain.database.match.entity.Match
 import com.teamplay.domain.database.match.entity.MatchRequest
 import io.swagger.annotations.ApiOperation
-import org.springframework.data.domain.Page
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -17,14 +18,14 @@ class MatchController (
 ) {
     @ApiOperation(value = "매칭 게시글 보기")
     @GetMapping
-    fun findMatches(@ModelAttribute specs: MatchSpecs): Page<Match> {
+    fun findMatches(@ModelAttribute specs: MatchSpecs): MatchListResponse {
         return matchService.findMatches(specs)
     }
 
     @ApiOperation(value = "매칭 상세 글 보기")
     @GetMapping("/{matchId}")
-    fun getMatch(@PathVariable matchId: Long): Match {
-        return matchService.getMatch(matchId)
+    fun getMatch(@PathVariable matchId: Long): MatchInfo {
+        return matchService.getMatchInfo(matchId)
     }
 
     @ApiOperation(value = "매칭 스케쥴 보기")
