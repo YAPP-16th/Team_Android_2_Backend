@@ -11,10 +11,11 @@ data class MatchSpecs(
         override val descending: Boolean = true,
         override val page: Int = 1,
         override val rowsPerPage: Int = 10,
-        override val sortBy: String? = "id",
+        override val sortBy: String = "id",
         override val isAll: Boolean = false,
 
-        val startTime: Date? = null,
+        val startTimeFrom: Date? = null,
+        val startTimeTo: Date? = null,
         val location: String? = null,
         val matchStyle: MatchStyle? = null
 ) : PagingModel() {
@@ -23,8 +24,12 @@ data class MatchSpecs(
 
             val predicates = mutableListOf<Predicate>(builder.conjunction())
 
-            startTime?.let {
-                predicates.add(builder.equal(match.get<Date>("startTime"), it))
+            startTimeFrom?.let {
+                predicates.add(builder.greaterThanOrEqualTo(match.get("startTime"), it))
+            }
+
+            startTimeTo?.let {
+                predicates.add(builder.lessThanOrEqualTo(match.get("startTime"), it))
             }
 
             location?.let {

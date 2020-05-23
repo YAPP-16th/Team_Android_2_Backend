@@ -10,8 +10,6 @@ class FindAllMatchByMatchSpec(
     private val matchRepository: MatchRepository
 ): Function<MatchSpecs, Page<Match>> {
     override fun apply(specs: MatchSpecs): Page<Match> {
-
         return matchRepository.findAll(specs.createSpecs(), specs.createPageRequest())
     }
-
 }

@@ -22,6 +22,9 @@ data class MatchRequest(
     @Column(nullable = false)
     var matchRequestStatus: MatchRequestStatus = MatchRequestStatus.WAITING,
 
+    @Column(nullable = false)
+    var contact: String,
+
     @CreationTimestamp
     @Column(nullable = false)
     val createdDate: Date? = Date(),

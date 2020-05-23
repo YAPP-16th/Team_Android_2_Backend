@@ -1,13 +1,12 @@
 package com.teamplay.domain.business.match.dto
 
-import com.teamplay.domain.database.match.entity.MatchStyle
-import java.util.*
+import com.teamplay.domain.database.match.entity.MatchRequestStatus
 
 class MatchScheduleInfo (
-    val homeName: String,
-    val awayName: String,
-    val matchStyle: MatchStyle,
-    val location: String,
-    val matchStartTime: Date,
-    val matchEndTime: Date
+    val title: String,
+    val description: String,
+    val matchDate: String? = null,
+    val matchTime: String? = null,
+    val requestStatus: MatchRequestStatus? = null,
+    val matchRequestId: Long? = null
 )

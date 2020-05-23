@@ -1,14 +1,32 @@
 package com.teamplay.domain.business.match.dto
 
-import com.teamplay.domain.database.match.entity.MatchStyle
-import java.util.*
+import com.teamplay.domain.database.match.entity.Match
+import java.text.SimpleDateFormat
 
 class MatchInfo (
     val title: String,
     val hostName: String,
-    val matchStartTime: Date,
-    val matchEndTime: Date,
+    val matchDate: String,
+    val matchTime: String,
     val location: String,
-    val matchStyle: MatchStyle,
-    val introduce: String
-)
+    val matchStyle: String,
+    val introduce: String,
+    val matchRule: String
+) {
+    constructor(match: Match): this(
+            title = match.title,
+            hostName = match.home.name,
+            matchDate = SimpleDateFormat(MMDD_WITH_SLASH).format(match.endTime),
+            matchTime = SimpleDateFormat(HHMM_WITH_SLASH).format(match.endTime) + " - " +
+                    SimpleDateFormat(HHMM_WITH_SLASH).format(match.endTime),
+            location = match.location,
+            matchStyle = match.matchStyle.toString(),
+            matchRule = match.matchStyle.getRule(),
+            introduce = match.introduce
+    )
+
+    companion object {
+        private const val MMDD_WITH_SLASH = "yyyy년 MM월 dd일"
+        private const val HHMM_WITH_SLASH = "hh:mm"
+    }
+}
