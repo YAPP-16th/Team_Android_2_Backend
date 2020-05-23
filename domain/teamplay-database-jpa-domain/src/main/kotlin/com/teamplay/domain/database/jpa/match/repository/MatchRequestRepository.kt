@@ -10,17 +10,17 @@ interface MatchRequestRepository : JpaRepository<MatchRequest, Long> {
     @Query("""
         SELECT mr
         from MatchRequest mr
-        WHERE mr.match.home = :club
+        WHERE mr.match.home = :clubId
         AND mr.matchRequestStatus = com.teamplay.domain.database.match.entity.MatchRequestStatus.WAITING
         AND mr.match.startTime > CURRENT_DATE
     """)
-    fun findAllHostMatch(club: Long): MutableList<MatchRequest>
+    fun findAllHostMatch(clubId: Long): MutableList<MatchRequest>
 
     @Query("""
         SELECT mr
         from MatchRequest mr
-        WHERE mr.requester = :club
+        WHERE mr.requester = :clubId
         AND mr.match.startTime > CURRENT_DATE
     """)
-    fun findAllGuestMatch(club: Long): MutableList<MatchRequest>
+    fun findAllGuestMatch(clubId: Long): MutableList<MatchRequest>
 }

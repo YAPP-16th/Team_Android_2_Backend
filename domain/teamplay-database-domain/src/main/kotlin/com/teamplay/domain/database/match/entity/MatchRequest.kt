@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.teamplay.core.database.EntityId
 import com.teamplay.domain.database.club.entity.Club
 import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
 import java.util.*
 import javax.persistence.*
 
@@ -25,7 +26,7 @@ data class MatchRequest(
     @Column(nullable = false)
     val createdDate: Date? = Date(),
 
-    @CreationTimestamp
+    @UpdateTimestamp
     @Column(nullable = false)
     val modifiedDate: Date? = Date()
 ): EntityId {

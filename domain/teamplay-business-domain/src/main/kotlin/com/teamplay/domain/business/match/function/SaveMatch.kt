@@ -12,5 +12,4 @@ open class SaveMatch(
     override fun apply(match: Match): Match {
         return matchRepository.save(match.prepareForSave())
     }
-
 }

@@ -1,10 +1,13 @@
 package com.teamplay.api.com.teamplay.api.external.service
 
-import com.teamplay.domain.business.match.dto.MatchScheduleResponse
+import com.teamplay.api.com.teamplay.api.external.response.MatchScheduleResponse
+import com.teamplay.domain.business.club.validator.CheckExistClub
 import com.teamplay.domain.business.match.function.*
 import com.teamplay.domain.business.match.validator.CheckExistMatchById
 import com.teamplay.domain.business.match.validator.CheckExistMatchRequest
+import com.teamplay.domain.business.match.validator.CheckIsWaitingMatchById
 import com.teamplay.domain.business.match.validator.CheckValidMatchSpec
+import com.teamplay.domain.database.jpa.club.repository.ClubRepository
 import com.teamplay.domain.database.jpa.match.repository.MatchRepository
 import com.teamplay.domain.database.jpa.match.repository.MatchRequestRepository
 import com.teamplay.domain.database.jpa.match.repository.spec.MatchSpecs
@@ -19,47 +22,59 @@ import javax.persistence.EntityManager
 class MatchService (
         matchRepository: MatchRepository,
         matchRequestRepository: MatchRequestRepository,
+        clubRepository: ClubRepository,
         private val entityManager: EntityManager
 ) {
     private val findAllMatchByMatchSpec = FindAllMatchByMatchSpec(matchRepository)
-    private val getMatchById = GetMatchById(matchRepository)
-    private val getMatchScheduleByClubId = GetMatchScheduleByClubId(matchRepository, matchRequestRepository)
-    private val saveMatch = SaveMatch(matchRepository)
+    private val getMatchByIdFunction = GetMatchById(matchRepository)
+    private val getMatchScheduleByClubId = GetMatchScheduleByClubId(matchRepository)
+    private val getGuestMatchByClubId = GetGuestMatchByClubId(matchRequestRepository)
+    private val getHostMatchByClubId = GetHostMatchByClubId(matchRequestRepository)
+    private val saveMatchFunction = SaveMatch(matchRepository)
     private val updateMatchRequest = UpdateMatchRequest(matchRepository)
 
     private val checkValidMatchSpec = CheckValidMatchSpec()
     private val checkExistMatchById = CheckExistMatchById(matchRepository)
+    private val checkIsWaitingMatchById = CheckIsWaitingMatchById(matchRepository)
     private val checkExistMatchRequest = CheckExistMatchRequest(matchRequestRepository)
+    private val checkExistClub = CheckExistClub(clubRepository)
 
-    fun find(specs: MatchSpecs): Page<Match> {
+    fun findMatches(specs: MatchSpecs): Page<Match> {
         checkValidMatchSpec.verify(specs)
         return findAllMatchByMatchSpec(specs)
     }
 
-    fun get(id: Long): Match {
+    fun getMatch(id: Long): Match {
         checkExistMatchById.verify(id)
-        return getMatchById(id)
+        return getMatchByIdFunction(id)
     }
 
     fun getMatchSchedule(clubId: Long): MatchScheduleResponse {
-        // club 머지 후 club id verify 추가
-        return getMatchScheduleByClubId(clubId)
+        checkExistClub.verify(clubId)
+
+        return MatchScheduleResponse(
+                matchSchedule = getMatchScheduleByClubId(clubId),
+                hostMatchRequest = getGuestMatchByClubId(clubId),
+                guestMatchRequest = getHostMatchByClubId(clubId)
+        )
     }
 
-    fun save(match: Match): Match {
-        return saveMatch(match)
+    fun saveMatch(match: Match): Match {
+        return saveMatchFunction(match)
     }
 
     @Transactional
     fun saveMatchRequest(matchId: Long, matchRequest: MatchRequest): MatchRequest {
         checkExistMatchById.verify(matchId)
-        matchRequest.match = get(matchId)
+        checkIsWaitingMatchById.verify(matchId)
+
+        matchRequest.match = getMatch(matchId)
         return entityManager.merge(matchRequest)
     }
 
     fun responseMatchRequest(matchRequest: MatchRequest): Match {
         checkExistMatchRequest(matchRequest.id)
         val match = updateMatchRequest(matchRequest)
-        return save(match)
+        return saveMatch(match)
     }
 }

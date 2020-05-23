@@ -13,11 +13,19 @@ interface MatchRepository : JpaRepository<Match, Long>, JpaSpecificationExecutor
 
     @Query("""
         SELECT m 
-        from Match m 
+        FROM Match m 
         WHERE m.matchStatus = com.teamplay.domain.database.match.entity.MatchRequestStatus.ACCEPT
-        AND m.home = :homeClub
+        AND m.home = :homeClubId
         AND m.startTime BETWEEN CURRENT_DATE AND sysdate + 30/(24*60)
         ORDER BY m.startTime DESC
     """)
-    fun findAllAcceptMatch(homeClub: Long): MutableList<Match>
+    fun findAllAcceptMatch(homeClubId: Long): MutableList<Match>
+
+    @Query("""
+        SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END 
+        FROM Match m
+        WHERE m.id = :matchId
+        AND m.matchStatus = com.teamplay.domain.database.match.entity.MatchStatus.WAITING
+    """)
+    fun checkIsWaitingMatchById(matchId: Long): Boolean
 }
