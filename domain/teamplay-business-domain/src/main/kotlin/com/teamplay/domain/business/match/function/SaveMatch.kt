@@ -5,12 +5,11 @@ import com.teamplay.domain.database.jpa.match.repository.MatchRepository
 import com.teamplay.domain.database.match.entity.Match
 import org.springframework.transaction.annotation.Transactional
 
-class SaveMatch(
+open class SaveMatch(
     private val matchRepository: MatchRepository
 ): Function<Match, Match> {
     @Transactional
     override fun apply(match: Match): Match {
         return matchRepository.save(match.prepareForSave())
     }
-
 }
