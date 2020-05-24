@@ -4,6 +4,7 @@ import com.teamplay.domain.database.match.entity.Match
 import java.text.SimpleDateFormat
 
 class MatchInfo (
+    val id: Long,
     val title: String,
     val hostName: String,
     val matchDate: String,
@@ -14,10 +15,11 @@ class MatchInfo (
     val matchRule: String
 ) {
     constructor(match: Match): this(
+            id = match.id!!,
             title = match.title,
             hostName = match.home.name,
-            matchDate = SimpleDateFormat(MMDD_WITH_SLASH).format(match.endTime),
-            matchTime = SimpleDateFormat(HHMM_WITH_SLASH).format(match.endTime) + " - " +
+            matchDate = SimpleDateFormat(MMDD_WITH_SLASH).format(match.startTime),
+            matchTime = SimpleDateFormat(HHMM_WITH_SLASH).format(match.startTime) + " - " +
                     SimpleDateFormat(HHMM_WITH_SLASH).format(match.endTime),
             location = match.location,
             matchStyle = match.matchStyle.toString(),

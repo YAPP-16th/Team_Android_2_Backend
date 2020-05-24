@@ -9,11 +9,6 @@ class DateUtil {
         return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
     }
 
-    fun isBetweenDate(compareStartDate: Date, compareEndDate: Date, checkDate: Date): Boolean {
-        return (checkDate.after(compareStartDate) || checkDate == compareStartDate)
-                && (checkDate.before(compareEndDate) || checkDate == compareEndDate)
-    }
-
     fun getStartDayByLocalDate(localDate: LocalDate): Date {
         return localDateToDate(localDate.atStartOfDay().toLocalDate())
     }

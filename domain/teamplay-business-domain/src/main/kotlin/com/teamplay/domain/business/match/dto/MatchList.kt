@@ -5,17 +5,19 @@ import java.text.SimpleDateFormat
 
 class MatchList (
     val title: String,
+    val id: Long,
     val description1: String,
     val description2: String,
     val matchInfo: MatchInfo
 ) {
     constructor(match: Match): this(
         title = match.title,
+        id = match.id!!,
         matchInfo = MatchInfo(match),
-        description1 = "${match.location} | ${match.matchStyle}",
+        description1 = "${match.home.name} | ${match.matchStyle}",
         description2 = SimpleDateFormat(MMDD_WITH_SLASH).format(match.startTime) + " " +
-                SimpleDateFormat(HHMM_WITH_SLASH).format(match.endTime) + " - " +
-                SimpleDateFormat(HHMM_WITH_SLASH).format(match.endTime)
+                SimpleDateFormat(HHMM_WITH_SLASH).format(match.startTime) + " - " +
+                SimpleDateFormat(HHMM_WITH_SLASH).format(match.endTime) + " | " + match.location
     )
 
     companion object {

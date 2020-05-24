@@ -3,6 +3,7 @@ package com.teamplay.api.com.teamplay.api.external.service
 import com.teamplay.api.com.teamplay.api.external.response.MatchListResponse
 import com.teamplay.api.com.teamplay.api.external.response.MatchScheduleResponse
 import com.teamplay.core.function.date.DateUtil
+import com.teamplay.domain.business.club.function.FindClubById
 import com.teamplay.domain.business.club.validator.CheckExistClub
 import com.teamplay.domain.business.match.dto.*
 import com.teamplay.domain.business.match.function.*
@@ -16,6 +17,7 @@ import com.teamplay.domain.database.jpa.match.repository.MatchRequestRepository
 import com.teamplay.domain.database.jpa.match.repository.spec.MatchSpecs
 import com.teamplay.domain.database.match.entity.Match
 import com.teamplay.domain.database.match.entity.MatchRequest
+import com.teamplay.domain.database.match.entity.MatchRequestStatus
 import com.teamplay.domain.database.match.entity.MatchStyle
 import mu.KLogging
 import org.springframework.stereotype.Service
@@ -42,6 +44,7 @@ class MatchService (
     private val getHostMatchByClubId = GetHostMatchByClubId(matchRequestRepository)
     private val saveMatchFunction = SaveMatch(matchRepository)
     private val updateMatchRequest = UpdateMatchRequest(matchRepository)
+    private val findClubById = FindClubById(clubRepository)
 
     private val checkValidMatchSpec = CheckValidMatchSpec()
     private val checkExistMatchById = CheckExistMatchById(matchRepository)
@@ -51,7 +54,7 @@ class MatchService (
 
     private val dateUtil = DateUtil()
 
-    fun findMatches(specs: MatchSpecs): MatchListResponse {
+    fun getMatchesList(specs: MatchSpecs): MatchListResponse {
         checkValidMatchSpec.verify(specs)
         return findAllMatchByMatchSpec(specs).run {
             val matchList = this.map{
@@ -67,17 +70,9 @@ class MatchService (
         }
     }
 
-    fun getMatch(id: Long): Match {
-        checkExistMatchById.verify(id)
-        return getMatchByIdFunction(id)
-    }
-
     fun getMatchInfo(id: Long): MatchInfo {
         checkExistMatchById.verify(id)
-
-        return getMatchByIdFunction(id).run {
-            MatchInfo(this)
-        }
+        return MatchInfo(getMatchByIdFunction(id))
     }
 
     fun getMatchSchedule(clubId: Long): MatchScheduleResponse {
@@ -93,17 +88,18 @@ class MatchService (
     }
 
     @Transactional
-    fun saveMatchRequest(matchId: Long, matchRequest: MatchRequest): MatchRequest {
+    fun saveMatchRequest(matchId: Long, requesterClubId: Long, contact: String): MatchRequest {
         checkExistMatchById.verify(matchId)
         checkIsWaitingMatchById.verify(matchId)
-
-        matchRequest.match = getMatch(matchId)
-        return entityManager.merge(matchRequest)
+        return entityManager.merge(MatchRequest(
+                requester = findClubById(requesterClubId),
+                contact = contact
+        ).apply{ this.match = getMatchByIdFunction(matchId) })
     }
 
-    fun responseMatchRequest(matchRequest: MatchRequest): Match {
-        checkExistMatchRequest(matchRequest.id)
-        val match = updateMatchRequest(matchRequest)
+    fun responseMatchRequest(matchRequestId: Long, matchRequestStatus: MatchRequestStatus): Match {
+        checkExistMatchRequest(matchRequestId)
+        val match = updateMatchRequest(UpdateMatchRequestDto(matchRequestId, matchRequestStatus))
         return saveMatch(match)
     }
 
@@ -112,7 +108,7 @@ class MatchService (
 
         return mutableListOf(
                 listOf(startTimeFrom, startTimeTo).any{ it != null }.run{
-                    if (this) (startTimeFrom?.let{ dateFormat.format(it) }) ?: "" + " - " + (startTimeTo?.let{ dateFormat.format(it) } ?: "")
+                    if (this) (startTimeFrom?.let{ dateFormat.format(it) } ?: "") + " - " + (startTimeTo?.let{ dateFormat.format(it) } ?: "")
                     else null
                 },
                 location,
@@ -135,33 +131,34 @@ class MatchService (
                 MatchScheduleRequest(
                         clubId,
                         startThisWeek,
+                        endThisWeek
+                )
+        ).forEach{
+            oneWeekLaterMatchScheduleInfo.add(
+                    MatchScheduleInfo(
+                            title = "${it.home.name} vs ${it.away?.name ?: ""}",
+                            description = "${it.matchStyle} | ${it.location}",
+                            matchDate = dateFormat.format(it.startTime),
+                            matchTime = "${timeFormat.format(it.startTime)} - ${timeFormat.format(it.endTime)}"
+                    )
+            )
+        }
+
+        getMatchScheduleByClubId(
+                MatchScheduleRequest(
+                        clubId,
+                        nextStartWeek,
                         nextEndWeek
                 )
-        ).map{
-            if (dateUtil.isBetweenDate(startThisWeek, endThisWeek, it.startTime)) {
-                oneWeekLaterMatchScheduleInfo.add(
-                        MatchScheduleInfo(
-                                title = "${it.home.name} vs ${it.away?.name ?: ""}",
-                                description = "${it.matchStyle} | ${it.location}",
-                                matchDate = dateFormat.format(it.startTime),
-                                matchTime = "${timeFormat.format(it.startTime)} - ${timeFormat.format(it.endTime)}"
-                        )
-                )
-            } else if (dateUtil.isBetweenDate(nextStartWeek, nextEndWeek, it.startTime)) {
-                twoWeekLaterMatchScheduleInfo.add(
-                        MatchScheduleInfo(
-                                title = "${it.home.name} vs ${it.away?.name ?: ""}",
-                                description = "${it.matchStyle} | ${it.location}",
-                                matchDate = dateFormat.format(it.startTime),
-                                matchTime = "${timeFormat.format(it.startTime)} - ${timeFormat.format(it.endTime)}"
-                        )
-                )
-            } else {
-                logger.error("[MATCH SERVICE ERROR] Match schedule response is invalid. matchId: {}, matchTitle: {}",
-                        it.id,
-                        it.title
-                )
-            }
+        ).forEach{
+            twoWeekLaterMatchScheduleInfo.add(
+                    MatchScheduleInfo(
+                            title = "${it.home.name} vs ${it.away?.name ?: ""}",
+                            description = "${it.matchStyle} | ${it.location}",
+                            matchDate = dateFormat.format(it.startTime),
+                            matchTime = "${timeFormat.format(it.startTime)} - ${timeFormat.format(it.endTime)}"
+                    )
+            )
         }
 
         return mutableListOf(

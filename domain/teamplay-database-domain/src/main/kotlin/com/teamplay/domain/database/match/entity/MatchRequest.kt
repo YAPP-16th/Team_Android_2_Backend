@@ -13,7 +13,7 @@ import javax.persistence.*
 data class MatchRequest(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    override val id: Long?,
+    override val id: Long? = null,
 
     @OneToOne
     val requester: Club,
@@ -23,7 +23,7 @@ data class MatchRequest(
     var matchRequestStatus: MatchRequestStatus = MatchRequestStatus.WAITING,
 
     @Column(nullable = false)
-    var contact: String,
+    val contact: String,
 
     @CreationTimestamp
     @Column(nullable = false)

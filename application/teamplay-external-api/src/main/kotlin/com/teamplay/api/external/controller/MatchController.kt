@@ -1,6 +1,7 @@
 package com.teamplay.api.com.teamplay.api.external.controller
 
 import com.teamplay.api.com.teamplay.api.external.config.baseUrl
+import com.teamplay.api.com.teamplay.api.external.request.CreateMatchRequest
 import com.teamplay.api.com.teamplay.api.external.response.MatchListResponse
 import com.teamplay.api.com.teamplay.api.external.response.MatchScheduleResponse
 import com.teamplay.api.com.teamplay.api.external.service.MatchService
@@ -8,6 +9,7 @@ import com.teamplay.domain.business.match.dto.MatchInfo
 import com.teamplay.domain.database.jpa.match.repository.spec.MatchSpecs
 import com.teamplay.domain.database.match.entity.Match
 import com.teamplay.domain.database.match.entity.MatchRequest
+import com.teamplay.domain.database.match.entity.MatchRequestStatus
 import io.swagger.annotations.ApiOperation
 import org.springframework.web.bind.annotation.*
 
@@ -19,7 +21,7 @@ class MatchController (
     @ApiOperation(value = "매칭 게시글 보기")
     @GetMapping
     fun findMatches(@ModelAttribute specs: MatchSpecs): MatchListResponse {
-        return matchService.findMatches(specs)
+        return matchService.getMatchesList(specs)
     }
 
     @ApiOperation(value = "매칭 상세 글 보기")
@@ -41,15 +43,15 @@ class MatchController (
     }
 
     @ApiOperation(value = "시합 요청")
-    @PostMapping("/matchRequest/{matchId}")
-    fun requestMatch(@PathVariable matchId: Long, @RequestBody matchRequest: MatchRequest): MatchRequest {
-        return matchService.saveMatchRequest(matchId, matchRequest)
+    @PostMapping("/{matchId}/matchRequest")
+    fun requestMatch(@PathVariable matchId: Long, @RequestBody createMatchRequest: CreateMatchRequest): MatchRequest {
+        return matchService.saveMatchRequest(matchId, createMatchRequest.requesterClubId, createMatchRequest.contact)
     }
 
     @ApiOperation(value = "시합 요청 응답")
-    @PutMapping("/matchResponse")
-    fun responseMatch(@RequestBody matchRequest: MatchRequest): Match {
-        return matchService.responseMatchRequest(matchRequest)
+    @PutMapping("/{matchRequestId}/matchResponse")
+    fun responseMatch(@PathVariable matchRequestId: Long, @RequestBody matchRequestStatus: MatchRequestStatus): Match {
+        return matchService.responseMatchRequest(matchRequestId, matchRequestStatus)
     }
 }
 

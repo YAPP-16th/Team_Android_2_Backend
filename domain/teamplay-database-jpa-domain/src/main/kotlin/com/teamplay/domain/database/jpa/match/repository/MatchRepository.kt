@@ -10,7 +10,7 @@ import java.util.*
 
 @Repository
 interface MatchRepository : JpaRepository<Match, Long>, JpaSpecificationExecutor<Match> {
-    fun getByMatchRequests(matchRequest: MatchRequest): Match
+    fun getByMatchRequests(matchRequestId: Long): Match
 
     @Query("""
         SELECT m
