@@ -4,6 +4,7 @@ import com.teamplay.core.function.ValidatorWithError
 import com.teamplay.core.function.error.InvalidSpecError
 import com.teamplay.domain.database.jpa.match.repository.spec.MatchSpecs
 import com.teamplay.domain.database.match.entity.Match
+import mu.KLogging
 
 class CheckValidMatchSpec: ValidatorWithError<MatchSpecs>(InvalidSpecError()) {
     override fun apply(matchSpecs: MatchSpecs): Boolean {
@@ -14,7 +15,8 @@ class CheckValidMatchSpec: ValidatorWithError<MatchSpecs>(InvalidSpecError()) {
                     "_${column.value}"
                 }.toLowerCase()
             }.contains(it.sortBy)
-        }
+        }.apply{ logger.error("Match spec is invalid. page : {}, rowsPerPage : {}, sortBy : {}", matchSpecs.page, matchSpecs.rowsPerPage, matchSpecs.sortBy) }
     }
 
+    companion object: KLogging()
 }

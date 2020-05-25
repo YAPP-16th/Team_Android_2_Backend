@@ -1,10 +1,7 @@
 package com.teamplay.api.com.teamplay.api.external.response
 
-import com.teamplay.domain.database.match.entity.Match
-import com.teamplay.domain.database.match.entity.MatchRequest
+import com.teamplay.domain.business.match.dto.MatchScheduleList
 
 data class MatchScheduleResponse(
-    val matchSchedule: MutableList<Match>,
-    val hostMatchRequest: MutableList<MatchRequest>,
-    val guestMatchRequest: MutableList<MatchRequest>
+    val matchSchedule: MutableList<MatchScheduleList>
 )

@@ -6,20 +6,21 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
+import java.util.*
 
 @Repository
 interface MatchRepository : JpaRepository<Match, Long>, JpaSpecificationExecutor<Match> {
-    fun getByMatchRequests(matchRequest: MatchRequest): Match
+    fun getByMatchRequests(matchRequestId: Long): Match
 
     @Query("""
-        SELECT m 
+        SELECT m
         FROM Match m 
-        WHERE m.matchStatus = com.teamplay.domain.database.match.entity.MatchRequestStatus.ACCEPT
-        AND m.home = :homeClubId
-        AND m.startTime BETWEEN CURRENT_DATE AND sysdate + 30/(24*60)
+        WHERE m.matchStatus = com.teamplay.domain.database.match.entity.MatchStatus.CLOSE
+        AND m.home.id = :homeClubId
+        AND m.startTime BETWEEN :startDate AND :endDate
         ORDER BY m.startTime DESC
     """)
-    fun findAllAcceptMatch(homeClubId: Long): MutableList<Match>
+    fun findAllAcceptMatchByBetweenDate(homeClubId: Long, startDate: Date, endDate: Date): MutableList<Match>
 
     @Query("""
         SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END 

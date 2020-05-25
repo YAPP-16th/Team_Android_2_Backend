@@ -21,6 +21,9 @@ data class Match(
     val away: Club? = null,
 
     @Column(nullable = false)
+    val title: String,
+
+    @Column(nullable = false)
     val location: String,
 
     @Column(nullable = false)
@@ -28,6 +31,9 @@ data class Match(
 
     @Column(nullable = false)
     val endTime: Date,
+
+    @Column(nullable = false)
+    val introduce: String,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
