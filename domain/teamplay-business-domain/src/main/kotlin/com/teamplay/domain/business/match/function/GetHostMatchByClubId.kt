@@ -8,6 +8,6 @@ class GetHostMatchByClubId(
     private val matchRequestRepository: MatchRequestRepository
 ): Function<Long, MutableList<MatchRequest>> {
     override fun apply(id: Long): MutableList<MatchRequest> {
-        return matchRequestRepository.findAllGuestMatch(id)
+        return matchRequestRepository.findAllHostMatch(id)
     }
 }

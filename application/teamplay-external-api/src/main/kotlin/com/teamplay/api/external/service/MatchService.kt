@@ -123,7 +123,11 @@ class MatchService (
         val startThisWeek = dateUtil.getStartDayByLocalDate(now.with(DayOfWeek.MONDAY))
         val endThisWeek = dateUtil.getEndDayByLocalDate(now.with(DayOfWeek.SUNDAY))
         val nextStartWeek = dateUtil.getStartDayByLocalDate(now.with(TemporalAdjusters.next(DayOfWeek.MONDAY)))
-        val nextEndWeek = dateUtil.getEndDayByLocalDate(now.with(TemporalAdjusters.next(DayOfWeek.SUNDAY)))
+        val nextEndWeek = if (now.dayOfWeek.value == 7) {
+            dateUtil.getEndDayByLocalDate(now.with(TemporalAdjusters.next(DayOfWeek.SUNDAY)))
+        } else {
+            dateUtil.getEndDayByLocalDate(now.with(TemporalAdjusters.next(DayOfWeek.SUNDAY)).with(TemporalAdjusters.next(DayOfWeek.SUNDAY)))
+        }
         val oneWeekLaterMatchScheduleInfo : MutableList<MatchScheduleInfo> = mutableListOf()
         val twoWeekLaterMatchScheduleInfo : MutableList<MatchScheduleInfo> = mutableListOf()
 
@@ -199,7 +203,7 @@ class MatchService (
         val guestMatchRequestList = getGuestMatchByClubId(clubId).run{
             this.map {
                 MatchScheduleInfo(
-                        title = "${it.requester.name}에 매치를 신청했습니다.",
+                        title = "${it.match.home.name}에 매치를 신청했습니다.",
                         description = "${it.match.matchStyle} | ${it.match.location}",
                         requestStatus = it.matchRequestStatus,
                         matchRequestId = it.id

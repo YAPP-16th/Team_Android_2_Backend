@@ -15,8 +15,8 @@ interface MatchRepository : JpaRepository<Match, Long>, JpaSpecificationExecutor
     @Query("""
         SELECT m
         FROM Match m 
-        WHERE m.matchStatus = com.teamplay.domain.database.match.entity.MatchRequestStatus.ACCEPT
-        AND m.home = :homeClubId
+        WHERE m.matchStatus = com.teamplay.domain.database.match.entity.MatchStatus.CLOSE
+        AND m.home.id = :homeClubId
         AND m.startTime BETWEEN :startDate AND :endDate
         ORDER BY m.startTime DESC
     """)
