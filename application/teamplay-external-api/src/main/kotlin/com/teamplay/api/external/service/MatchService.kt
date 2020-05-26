@@ -1,16 +1,20 @@
 package com.teamplay.api.com.teamplay.api.external.service
 
+import com.teamplay.api.com.teamplay.api.external.request.CreateMatch
 import com.teamplay.api.com.teamplay.api.external.response.MatchListResponse
 import com.teamplay.api.com.teamplay.api.external.response.MatchScheduleResponse
 import com.teamplay.core.function.date.DateUtil
+import com.teamplay.domain.business.club.dto.CheckIsClubAdminDto
 import com.teamplay.domain.business.club.function.FindClubById
 import com.teamplay.domain.business.club.validator.CheckExistClub
+import com.teamplay.domain.business.club.validator.CheckIsClubAdmin
 import com.teamplay.domain.business.match.dto.*
 import com.teamplay.domain.business.match.function.*
 import com.teamplay.domain.business.match.validator.CheckExistMatchById
 import com.teamplay.domain.business.match.validator.CheckExistMatchRequest
 import com.teamplay.domain.business.match.validator.CheckIsWaitingMatchById
 import com.teamplay.domain.business.match.validator.CheckValidMatchSpec
+import com.teamplay.domain.database.jpa.club.repository.ClubAdminRepository
 import com.teamplay.domain.database.jpa.club.repository.ClubRepository
 import com.teamplay.domain.database.jpa.match.repository.MatchRepository
 import com.teamplay.domain.database.jpa.match.repository.MatchRequestRepository
@@ -35,6 +39,7 @@ class MatchService (
         matchRepository: MatchRepository,
         matchRequestRepository: MatchRequestRepository,
         clubRepository: ClubRepository,
+        clubAdminRepository: ClubAdminRepository,
         private val entityManager: EntityManager
 ) {
     private val findAllMatchByMatchSpec = FindAllMatchByMatchSpec(matchRepository)
@@ -51,6 +56,7 @@ class MatchService (
     private val checkIsWaitingMatchById = CheckIsWaitingMatchById(matchRepository)
     private val checkExistMatchRequest = CheckExistMatchRequest(matchRequestRepository)
     private val checkExistClub = CheckExistClub(clubRepository)
+    private val checkIsClubAdmin = CheckIsClubAdmin(clubAdminRepository)
 
     private val dateUtil = DateUtil()
 
@@ -81,6 +87,25 @@ class MatchService (
         return MatchScheduleResponse(
                 (createMatchSchedule(clubId) + createHostMatchSchedule(clubId) + createGuestMatchSchedule(clubId)).toMutableList()
         )
+    }
+
+    fun createMatch(createMatch: CreateMatch): Match {
+        checkIsClubAdmin(CheckIsClubAdminDto(
+                userId = createMatch.requesterUserId,
+                clubId = createMatch.requesterClubId
+        ))
+
+        val match = Match(
+                home = findClubById(createMatch.requesterClubId),
+                title = createMatch.createMatchDto.title,
+                location = createMatch.createMatchDto.location,
+                startTime = createMatch.createMatchDto.startDate,
+                endTime = createMatch.createMatchDto.endDate,
+                introduce = createMatch.createMatchDto.introduce,
+                matchStyle = createMatch.createMatchDto.matchStyle
+        )
+
+        return saveMatchFunction(match)
     }
 
     fun saveMatch(match: Match): Match {

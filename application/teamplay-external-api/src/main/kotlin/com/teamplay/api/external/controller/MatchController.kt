@@ -1,6 +1,7 @@
 package com.teamplay.api.com.teamplay.api.external.controller
 
 import com.teamplay.api.com.teamplay.api.external.config.baseUrl
+import com.teamplay.api.com.teamplay.api.external.request.CreateMatch
 import com.teamplay.api.com.teamplay.api.external.request.CreateMatchRequest
 import com.teamplay.api.com.teamplay.api.external.response.MatchListResponse
 import com.teamplay.api.com.teamplay.api.external.response.MatchScheduleResponse
@@ -38,8 +39,8 @@ class MatchController (
 
     @ApiOperation(value = "매칭 게시글 작성")
     @PostMapping
-    fun saveMatch(@RequestBody match: Match): Match {
-        return matchService.saveMatch(match)
+    fun saveMatch(@RequestBody createMatch: CreateMatch): Match {
+        return matchService.createMatch(createMatch)
     }
 
     @ApiOperation(value = "시합 요청")
