@@ -1,6 +1,7 @@
 package com.teamplay.api.com.teamplay.api.external.service
 
 import com.teamplay.api.com.teamplay.api.external.request.CreateMatch
+import com.teamplay.api.com.teamplay.api.external.request.CreateMatchRequest
 import com.teamplay.api.com.teamplay.api.external.response.MatchListResponse
 import com.teamplay.api.com.teamplay.api.external.response.MatchScheduleResponse
 import com.teamplay.core.function.date.DateUtil
@@ -10,10 +11,7 @@ import com.teamplay.domain.business.club.validator.CheckExistClub
 import com.teamplay.domain.business.club.validator.CheckIsClubAdmin
 import com.teamplay.domain.business.match.dto.*
 import com.teamplay.domain.business.match.function.*
-import com.teamplay.domain.business.match.validator.CheckExistMatchById
-import com.teamplay.domain.business.match.validator.CheckExistMatchRequest
-import com.teamplay.domain.business.match.validator.CheckIsWaitingMatchById
-import com.teamplay.domain.business.match.validator.CheckValidMatchSpec
+import com.teamplay.domain.business.match.validator.*
 import com.teamplay.domain.database.jpa.club.repository.ClubAdminRepository
 import com.teamplay.domain.database.jpa.club.repository.ClubRepository
 import com.teamplay.domain.database.jpa.match.repository.MatchRepository
@@ -45,18 +43,21 @@ class MatchService (
     private val findAllMatchByMatchSpec = FindAllMatchByMatchSpec(matchRepository)
     private val getMatchByIdFunction = GetMatchById(matchRepository)
     private val getMatchScheduleByClubId = GetMatchScheduleByClubId(matchRepository)
-    private val getGuestMatchByClubId = GetGuestMatchByClubId(matchRequestRepository)
-    private val getHostMatchByClubId = GetHostMatchByClubId(matchRequestRepository)
     private val saveMatchFunction = SaveMatch(matchRepository)
     private val updateMatchRequest = UpdateMatchRequest(matchRepository)
+    private val getGuestMatchByClubId = GetGuestMatchByClubId(matchRequestRepository)
+    private val getHostMatchByClubId = GetHostMatchByClubId(matchRequestRepository)
+    private val getMatchIdByMatchRequestId = GetMatchIdByMatchRequestId(matchRequestRepository)
     private val findClubById = FindClubById(clubRepository)
 
-    private val checkValidMatchSpec = CheckValidMatchSpec()
     private val checkExistMatchById = CheckExistMatchById(matchRepository)
     private val checkIsWaitingMatchById = CheckIsWaitingMatchById(matchRepository)
     private val checkExistMatchRequest = CheckExistMatchRequest(matchRequestRepository)
+    private val checkAlreadyRequestMatch = CheckAlreadyRequestMatch(matchRequestRepository)
+    private val checkIsWaitingMatchRequestById = CheckIsWaitingMatchRequestById(matchRequestRepository)
     private val checkExistClub = CheckExistClub(clubRepository)
     private val checkIsClubAdmin = CheckIsClubAdmin(clubAdminRepository)
+    private val checkValidMatchSpec = CheckValidMatchSpec()
 
     private val dateUtil = DateUtil()
 
@@ -90,7 +91,7 @@ class MatchService (
     }
 
     fun createMatch(createMatch: CreateMatch): Match {
-        checkIsClubAdmin(CheckIsClubAdminDto(
+        checkIsClubAdmin.verify(CheckIsClubAdminDto(
                 userId = createMatch.requesterUserId,
                 clubId = createMatch.requesterClubId
         ))
@@ -113,17 +114,31 @@ class MatchService (
     }
 
     @Transactional
-    fun saveMatchRequest(matchId: Long, requesterClubId: Long, contact: String): MatchRequest {
+    fun saveMatchRequest(matchId: Long, createMatchRequest: CreateMatchRequest): MatchRequest {
+        checkIsClubAdmin.verify(CheckIsClubAdminDto(
+                userId = createMatchRequest.requesterUserId,
+                clubId = createMatchRequest.requesterClubId
+        ))
         checkExistMatchById.verify(matchId)
         checkIsWaitingMatchById.verify(matchId)
+        checkAlreadyRequestMatch.verify(CheckAlreadyRequestMatchDto(
+                matchId = matchId,
+                requesterClubId = createMatchRequest.requesterClubId
+        ))
+
         return entityManager.merge(MatchRequest(
-                requester = findClubById(requesterClubId),
-                contact = contact
+                requester = findClubById(createMatchRequest.requesterClubId),
+                contact = createMatchRequest.contact
         ).apply{ this.match = getMatchByIdFunction(matchId) })
     }
 
     fun responseMatchRequest(matchRequestId: Long, matchRequestStatus: MatchRequestStatus): Match {
-        checkExistMatchRequest(matchRequestId)
+        checkExistMatchRequest.verify(matchRequestId)
+        checkIsWaitingMatchById.verify(
+                getMatchIdByMatchRequestId(matchRequestId)
+        )
+        checkIsWaitingMatchRequestById.verify(matchRequestId)
+
         val match = updateMatchRequest(UpdateMatchRequestDto(matchRequestId, matchRequestStatus))
         return saveMatch(match)
     }

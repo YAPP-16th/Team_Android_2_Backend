@@ -7,7 +7,6 @@ import com.teamplay.domain.database.jpa.match.repository.MatchRepository
 class CheckExistMatchById(
     private val repository: MatchRepository
 ): ValidatorWithError<Long>(MatchIsNotExistError()) {
-
     override fun apply(matchId: Long): Boolean {
         return repository.existsById(matchId)
     }

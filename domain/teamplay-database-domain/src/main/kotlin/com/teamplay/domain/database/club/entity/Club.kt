@@ -1,5 +1,6 @@
 package com.teamplay.domain.database.club.entity
 
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import com.teamplay.core.database.EntityId
 import com.teamplay.domain.database.user.entity.Ability
 import org.hibernate.annotations.CreationTimestamp
@@ -51,9 +52,11 @@ data class Club(
     @ElementCollection
     val questions: MutableList<String> = mutableListOf<String>(),
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "club")
     var members: MutableList<ClubMember> = mutableListOf<ClubMember>(),
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "club")
     var admin: MutableList<ClubAdmin> = mutableListOf<ClubAdmin>()
 ): EntityId

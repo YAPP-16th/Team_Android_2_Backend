@@ -46,7 +46,7 @@ class MatchController (
     @ApiOperation(value = "시합 요청")
     @PostMapping("/{matchId}/matchRequest")
     fun requestMatch(@PathVariable matchId: Long, @RequestBody createMatchRequest: CreateMatchRequest): MatchRequest {
-        return matchService.saveMatchRequest(matchId, createMatchRequest.requesterClubId, createMatchRequest.contact)
+        return matchService.saveMatchRequest(matchId, createMatchRequest)
     }
 
     @ApiOperation(value = "시합 요청 응답")

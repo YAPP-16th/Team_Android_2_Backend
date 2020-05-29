@@ -18,7 +18,7 @@ data class Match(
     val home: Club,
 
     @OneToOne
-    val away: Club? = null,
+    var away: Club? = null,
 
     @Column(nullable = false)
     val title: String,
