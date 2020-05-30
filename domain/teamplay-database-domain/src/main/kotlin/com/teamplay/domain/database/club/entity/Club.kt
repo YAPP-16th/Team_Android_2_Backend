@@ -54,6 +54,9 @@ data class Club(
 
     @JsonManagedReference
     @OneToMany(mappedBy = "club")
+    var notices: MutableList<Notice> = mutableListOf(),
+
+    @OneToMany(mappedBy = "club")
     var members: MutableList<ClubMember> = mutableListOf<ClubMember>(),
 
     @JsonManagedReference
