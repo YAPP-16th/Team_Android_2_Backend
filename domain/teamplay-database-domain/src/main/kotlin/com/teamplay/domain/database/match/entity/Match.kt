@@ -12,13 +12,13 @@ import javax.persistence.*
 data class Match(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    override val id: Long?,
+    override val id: Long? = null,
 
     @OneToOne
     val home: Club,
 
     @OneToOne
-    val away: Club? = null,
+    var away: Club? = null,
 
     @Column(nullable = false)
     val title: String,

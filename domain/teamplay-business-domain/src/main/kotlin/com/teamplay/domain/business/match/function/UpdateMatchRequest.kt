@@ -13,13 +13,14 @@ open class UpdateMatchRequest(
 ): Function<UpdateMatchRequestDto, Match> {
     @Transactional
     override fun apply(updateMatchRequestDto: UpdateMatchRequestDto): Match {
-        return matchRepository.getByMatchRequests(updateMatchRequestDto.matchRequestId).let { match ->
+        return matchRepository.getByMatchRequests_Id(updateMatchRequestDto.matchRequestId).let { match ->
             if (updateMatchRequestDto.matchRequestStatus == MatchRequestStatus.ACCEPT) {
                 match.matchStatus = MatchStatus.CLOSE
 
                 match.matchRequests?.map{
-                    if (it.id != updateMatchRequestDto.matchRequestId) {
-                        it.matchRequestStatus = MatchRequestStatus.REJECT
+                    when (it.id == updateMatchRequestDto.matchRequestId) {
+                        true -> match.away = it.requester
+                        else -> it.matchRequestStatus = MatchRequestStatus.REJECT
                     }
                 }
             }
