@@ -56,7 +56,7 @@ class MatchController (
     @ApiOperation(value = "매치 개인 기록 보기")
     @GetMapping("/{matchId}/result/individual")
     fun getIndividualResult(@PathVariable matchId: Long): MutableList<MatchIndividualResultDto> {
-        return matchService.getMatchIndivisualResult(matchId)
+        return matchService.getMatchIndividualResult(matchId)
     }
 
     @ApiOperation(value = "매칭 게시글 작성")

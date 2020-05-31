@@ -15,10 +15,14 @@ data class MatchDetailResult(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     override val id: Long? = null,
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     val resultType: MatchResultType,
 
+    @Column(nullable = false)
     val homeScore: Int,
 
+    @Column(nullable = false)
     val awayScore: Int
 ): EntityId {
     @JsonIgnore

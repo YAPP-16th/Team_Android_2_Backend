@@ -52,6 +52,7 @@ class MatchService (
     private val checkExistMatchById = CheckExistMatchById(matchRepository)
     private val checkIsWaitingMatchById = CheckIsWaitingMatchById(matchRepository)
     private val checkIsCloseMatchById = CheckIsCloseMatchById(matchRepository)
+    private val checkIsEndMatchById = CheckIsEndMatchById(matchRepository)
     private val checkExistMatchRequest = CheckExistMatchRequest(matchRequestRepository)
     private val checkAlreadyRequestMatch = CheckAlreadyRequestMatch(matchRequestRepository)
     private val checkIsWaitingMatchRequestById = CheckIsWaitingMatchRequestById(matchRequestRepository)
@@ -144,6 +145,10 @@ class MatchService (
     }
 
     fun enterMatchResult(matchId: Long, enterMatchResultRequest: EnterMatchResultRequest): Match {
+        checkIsClubAdmin.verify(CheckIsClubAdminDto(
+                userId = enterMatchResultRequest.requesterUserId,
+                clubId = enterMatchResultRequest.requesterClubId
+        ))
         checkExistMatchById.verify(matchId)
         checkIsCloseMatchById.verify(matchId)
 
@@ -176,7 +181,7 @@ class MatchService (
 
     fun getMatchSummaryResult(matchId: Long): MutableList<MatchSummaryResult> {
         checkExistMatchById.verify(matchId)
-        checkIsCloseMatchById.verify(matchId)
+        checkIsEndMatchById.verify(matchId)
 
         val match = getMatchByIdFunction(matchId)
         val matchHomeDetailResultDto = MatchSummaryResult(
@@ -197,7 +202,7 @@ class MatchService (
 
     fun getMatchDetailResult(matchId: Long): MatchDetailResultDto {
         checkExistMatchById.verify(matchId)
-        checkIsCloseMatchById.verify(matchId)
+        checkIsEndMatchById.verify(matchId)
 
         val match = getMatchByIdFunction(matchId)
         return MatchDetailResultDto(
@@ -213,9 +218,9 @@ class MatchService (
         )
     }
 
-    fun getMatchIndivisualResult(matchId: Long): MutableList<MatchIndividualResultDto> {
+    fun getMatchIndividualResult(matchId: Long): MutableList<MatchIndividualResultDto> {
         checkExistMatchById.verify(matchId)
-        checkIsCloseMatchById.verify(matchId)
+        checkIsEndMatchById.verify(matchId)
 
         return getMatchByIdFunction(matchId).matchIndividualResult?.map {
             MatchIndividualResultDto(

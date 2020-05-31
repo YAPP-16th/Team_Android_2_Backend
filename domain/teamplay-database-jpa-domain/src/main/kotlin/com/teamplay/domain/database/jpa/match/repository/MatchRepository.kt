@@ -34,13 +34,23 @@ interface MatchRepository : JpaRepository<Match, Long>, JpaSpecificationExecutor
         FROM Match m
         WHERE m.id = :matchId
         AND m.matchStatus = com.teamplay.domain.database.match.entity.MatchStatus.CLOSE
+        AND m.endTime < current_time
     """)
     fun checkIsCloseMatchById(matchId: Long): Boolean
 
     @Query("""
+        SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END 
+        FROM Match m
+        WHERE m.id = :matchId
+        AND m.matchStatus = com.teamplay.domain.database.match.entity.MatchStatus.END
+        AND m.endTime < current_time
+    """)
+    fun checkIsEndMatchById(matchId: Long): Boolean
+
+    @Query("""
         SELECT m
         FROM Match m
-        WHERE m.home = :clubId OR m.away = :clubId
+        WHERE (m.home.id = :clubId OR m.away.id = :clubId)
         AND m.matchStatus = com.teamplay.domain.database.match.entity.MatchStatus.END
         ORDER BY m.endTime
     """)
