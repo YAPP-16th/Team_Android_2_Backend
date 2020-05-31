@@ -11,8 +11,7 @@ class MatchInfo (
     val matchTime: String,
     val location: String,
     val matchStyle: String,
-    val introduce: String,
-    val matchRule: String
+    val introduce: String
 ) {
     constructor(match: Match): this(
             id = match.id!!,
@@ -23,7 +22,6 @@ class MatchInfo (
                     SimpleDateFormat(HHMM_WITH_SLASH).format(match.endTime),
             location = match.location,
             matchStyle = match.matchStyle.toString(),
-            matchRule = match.matchStyle.getRule(),
             introduce = match.introduce
     )
 

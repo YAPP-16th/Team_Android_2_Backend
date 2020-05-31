@@ -28,4 +28,21 @@ interface MatchRepository : JpaRepository<Match, Long>, JpaSpecificationExecutor
         AND m.matchStatus = com.teamplay.domain.database.match.entity.MatchStatus.WAITING
     """)
     fun checkIsWaitingMatchById(matchId: Long): Boolean
+
+    @Query("""
+        SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END 
+        FROM Match m
+        WHERE m.id = :matchId
+        AND m.matchStatus = com.teamplay.domain.database.match.entity.MatchStatus.CLOSE
+    """)
+    fun checkIsCloseMatchById(matchId: Long): Boolean
+
+    @Query("""
+        SELECT m
+        FROM Match m
+        WHERE m.home = :clubId OR m.away = :clubId
+        AND m.matchStatus = com.teamplay.domain.database.match.entity.MatchStatus.END
+        ORDER BY m.endTime
+    """)
+    fun getRecentlyRecordById(clubId: Long): MutableList<Match>
 }
