@@ -73,7 +73,12 @@ class MatchService (
                     totalPage = this.totalPages,
                     currentPage = this.number,
                     matchList = matchList,
-                    filterTitle = createMatchListFilterTitle(specs.startTimeFrom, specs.startTimeTo, specs.location, specs.matchStyle)
+                    filterTitle = createMatchListFilterTitle(
+                            specs.startTimeFrom?.let{dateUtil.convertStringToDate(it)},
+                            specs.startTimeTo?.let{dateUtil.convertStringToDate(it)},
+                            specs.location,
+                            specs.matchStyle
+                    )
             )
         }
     }
@@ -98,7 +103,7 @@ class MatchService (
         ))
 
         val match = Match(
-                home = findClubById(createMatch.requesterClubId),
+                host = findClubById(createMatch.requesterClubId),
                 title = createMatch.createMatchDto.title,
                 location = createMatch.createMatchDto.location,
                 startTime = createMatch.createMatchDto.startDate,
@@ -155,8 +160,8 @@ class MatchService (
         val match = getMatchByIdFunction(matchId)
         val matchDetailResult = enterMatchResultRequest.detailResult?.map {
             MatchDetailResult(
-                    homeScore = it.hostScore,
-                    awayScore = it.guestScore,
+                    hostScore = it.hostScore,
+                    guestScore = it.guestScore,
                     resultType = it.matchResultType
             )
         }
@@ -168,11 +173,11 @@ class MatchService (
             )
         }
 
-        match.homeScore = enterMatchResultRequest.homeScore
-        match.awayScore = enterMatchResultRequest.awayScore
+        match.hostScore = enterMatchResultRequest.hostScore
+        match.guestScore = enterMatchResultRequest.guestScore
         match.matchStatus = MatchStatus.END
         match.matchResultReview = enterMatchResultRequest.matchReview
-        match.winner = if(enterMatchResultRequest.homeScore > enterMatchResultRequest.awayScore) match.home else match.away
+        match.winner = if(enterMatchResultRequest.hostScore > enterMatchResultRequest.guestScore) match.host else match.guest
         matchDetailResult?.let { match.matchDetailResult?.addAll(it) }
         matchIndividualResult?.let { match.matchIndividualResult?.addAll(it) }
 
@@ -184,20 +189,20 @@ class MatchService (
         checkIsEndMatchById.verify(matchId)
 
         val match = getMatchByIdFunction(matchId)
-        val matchHomeDetailResultDto = MatchSummaryResult(
-                matchClubType = MatchClubType.HOME,
-                totalScore = match.homeScore ?: 0,
-                recentlyRecord = getRecentlyRecordById(match.home.id!!),
-                isVictory = match.homeScore ?: 0 > match.awayScore ?: 0
+        val matchHostDetailResultDto = MatchSummaryResult(
+                matchClubType = MatchClubType.HOST,
+                totalScore = match.hostScore ?: 0,
+                recentlyRecord = getRecentlyRecordById(match.host.id!!),
+                isVictory = match.hostScore ?: 0 > match.guestScore ?: 0
         )
-        val matchAwayDetailResultDto = MatchSummaryResult(
-                matchClubType = MatchClubType.AWAY,
-                totalScore = match.awayScore ?: 0,
-                recentlyRecord = getRecentlyRecordById(match.away!!.id!!),
-                isVictory = match.awayScore ?: 0 > match.homeScore ?: 0
+        val matchGuestDetailResultDto = MatchSummaryResult(
+                matchClubType = MatchClubType.GUEST,
+                totalScore = match.guestScore ?: 0,
+                recentlyRecord = getRecentlyRecordById(match.guest!!.id!!),
+                isVictory = match.guestScore ?: 0 > match.hostScore ?: 0
         )
 
-        return mutableListOf(matchHomeDetailResultDto, matchAwayDetailResultDto)
+        return mutableListOf(matchHostDetailResultDto, matchGuestDetailResultDto)
     }
 
     fun getMatchDetailResult(matchId: Long): MatchDetailResultDto {
@@ -206,13 +211,13 @@ class MatchService (
 
         val match = getMatchByIdFunction(matchId)
         return MatchDetailResultDto(
-                homeName = match.home.name,
-                awayName = match.away?.name ?: "",
+                hostName = match.host.name,
+                guestName = match.guest?.name ?: "",
                 matchDetailResultScore = match.matchDetailResult?.map {
                     MatchDetailResultScore(
                             matchResultType = it.resultType,
-                            homeScore = it.homeScore,
-                            awayScore = it.awayScore
+                            hostScore = it.hostScore,
+                            guestScore = it.guestScore
                     )
                 }?.toMutableList() ?: mutableListOf()
         )
@@ -268,7 +273,7 @@ class MatchService (
         ).forEach{
             oneWeekLaterMatchScheduleInfo.add(
                     MatchScheduleInfo(
-                            title = "${it.home.name} vs ${it.away?.name ?: ""}",
+                            title = "${it.host.name} vs ${it.guest?.name ?: ""}",
                             description = "${it.matchStyle} | ${it.location}",
                             matchDate = dateFormat.format(it.startTime),
                             matchTime = "${timeFormat.format(it.startTime)} - ${timeFormat.format(it.endTime)}"
@@ -285,7 +290,7 @@ class MatchService (
         ).forEach{
             twoWeekLaterMatchScheduleInfo.add(
                     MatchScheduleInfo(
-                            title = "${it.home.name} vs ${it.away?.name ?: ""}",
+                            title = "${it.host.name} vs ${it.guest?.name ?: ""}",
                             description = "${it.matchStyle} | ${it.location}",
                             matchDate = dateFormat.format(it.startTime),
                             matchTime = "${timeFormat.format(it.startTime)} - ${timeFormat.format(it.endTime)}"
@@ -331,7 +336,7 @@ class MatchService (
         val guestMatchRequestList = getGuestMatchByClubId(clubId).run{
             this.map {
                 MatchScheduleInfo(
-                        title = "${it.match.home.name}에 매치를 신청했습니다.",
+                        title = "${it.match.host.name}에 매치를 신청했습니다.",
                         description = "${it.match.matchStyle} | ${it.match.location}",
                         requestStatus = it.matchRequestStatus,
                         matchRequestId = it.id

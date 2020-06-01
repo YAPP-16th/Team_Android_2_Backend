@@ -16,7 +16,7 @@ class MatchInfo (
     constructor(match: Match): this(
             id = match.id!!,
             title = match.title,
-            hostName = match.home.name,
+            hostName = match.host.name,
             matchDate = SimpleDateFormat(MMDD_WITH_SLASH).format(match.startTime),
             matchTime = SimpleDateFormat(HHMM_WITH_SLASH).format(match.startTime) + " - " +
                     SimpleDateFormat(HHMM_WITH_SLASH).format(match.endTime),

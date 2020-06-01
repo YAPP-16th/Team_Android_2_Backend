@@ -20,10 +20,10 @@ data class MatchDetailResult(
     val resultType: MatchResultType,
 
     @Column(nullable = false)
-    val homeScore: Int,
+    val hostScore: Int,
 
     @Column(nullable = false)
-    val awayScore: Int
+    val guestScore: Int
 ): EntityId {
     @JsonIgnore
     @ManyToOne

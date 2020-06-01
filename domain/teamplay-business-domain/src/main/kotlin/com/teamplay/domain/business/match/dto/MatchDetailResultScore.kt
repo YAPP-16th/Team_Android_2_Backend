@@ -4,6 +4,6 @@ import com.teamplay.domain.database.match.entity.MatchResultType
 
 class MatchDetailResultScore (
     val matchResultType: MatchResultType,
-    val homeScore: Int,
-    val awayScore: Int
+    val hostScore: Int,
+    val guestScore: Int
 )

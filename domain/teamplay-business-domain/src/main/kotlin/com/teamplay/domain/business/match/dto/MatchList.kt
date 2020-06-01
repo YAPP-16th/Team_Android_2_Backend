@@ -14,7 +14,7 @@ class MatchList (
         title = match.title,
         id = match.id!!,
         matchInfo = MatchInfo(match),
-        description1 = "${match.home.name} | ${match.matchStyle}",
+        description1 = "${match.host.name} | ${match.matchStyle}",
         description2 = SimpleDateFormat(MMDD_WITH_SLASH).format(match.startTime) + " " +
                 SimpleDateFormat(HHMM_WITH_SLASH).format(match.startTime) + " - " +
                 SimpleDateFormat(HHMM_WITH_SLASH).format(match.endTime) + " | " + match.location

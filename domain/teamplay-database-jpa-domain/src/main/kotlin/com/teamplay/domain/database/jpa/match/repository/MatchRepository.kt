@@ -16,7 +16,7 @@ interface MatchRepository : JpaRepository<Match, Long>, JpaSpecificationExecutor
         FROM Match m 
         WHERE m.matchStatus = com.teamplay.domain.database.match.entity.MatchStatus.CLOSE
         AND m.startTime BETWEEN :startDate AND :endDate
-        AND (m.home.id = :clubId OR m.away.id = :clubId)
+        AND (m.host.id = :clubId OR m.guest.id = :clubId)
         ORDER BY m.startTime DESC
     """)
     fun findAllAcceptMatchByBetweenDate(clubId: Long, startDate: Date, endDate: Date): MutableList<Match>
@@ -50,7 +50,7 @@ interface MatchRepository : JpaRepository<Match, Long>, JpaSpecificationExecutor
     @Query("""
         SELECT m
         FROM Match m
-        WHERE (m.home.id = :clubId OR m.away.id = :clubId)
+        WHERE (m.host.id = :clubId OR m.guest.id = :clubId)
         AND m.matchStatus = com.teamplay.domain.database.match.entity.MatchStatus.END
         ORDER BY m.endTime
     """)

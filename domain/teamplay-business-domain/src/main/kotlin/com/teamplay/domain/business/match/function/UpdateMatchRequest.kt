@@ -19,7 +19,7 @@ open class UpdateMatchRequest(
 
                 match.matchRequests?.map{
                     when (it.id == updateMatchRequestDto.matchRequestId) {
-                        true -> match.away = it.requester
+                        true -> match.guest = it.requester
                         else -> it.matchRequestStatus = MatchRequestStatus.REJECT
                     }
                 }
