@@ -2,6 +2,7 @@ package com.teamplay.api.com.teamplay.api.external.service
 
 import com.teamplay.api.com.teamplay.api.external.request.CreateMatch
 import com.teamplay.api.com.teamplay.api.external.request.CreateMatchRequest
+import com.teamplay.api.com.teamplay.api.external.request.EnterMatchResultRequest
 import com.teamplay.api.com.teamplay.api.external.response.MatchListResponse
 import com.teamplay.api.com.teamplay.api.external.response.MatchScheduleResponse
 import com.teamplay.core.function.date.DateUtil
@@ -17,10 +18,7 @@ import com.teamplay.domain.database.jpa.club.repository.ClubRepository
 import com.teamplay.domain.database.jpa.match.repository.MatchRepository
 import com.teamplay.domain.database.jpa.match.repository.MatchRequestRepository
 import com.teamplay.domain.database.jpa.match.repository.spec.MatchSpecs
-import com.teamplay.domain.database.match.entity.Match
-import com.teamplay.domain.database.match.entity.MatchRequest
-import com.teamplay.domain.database.match.entity.MatchRequestStatus
-import com.teamplay.domain.database.match.entity.MatchStyle
+import com.teamplay.domain.database.match.entity.*
 import mu.KLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -45,6 +43,7 @@ class MatchService (
     private val getMatchScheduleByClubId = GetMatchScheduleByClubId(matchRepository)
     private val saveMatchFunction = SaveMatch(matchRepository)
     private val updateMatchRequest = UpdateMatchRequest(matchRepository)
+    private val getRecentlyRecordById = GetRecentlyRecordById(matchRepository)
     private val getGuestMatchByClubId = GetGuestMatchByClubId(matchRequestRepository)
     private val getHostMatchByClubId = GetHostMatchByClubId(matchRequestRepository)
     private val getMatchIdByMatchRequestId = GetMatchIdByMatchRequestId(matchRequestRepository)
@@ -52,6 +51,8 @@ class MatchService (
 
     private val checkExistMatchById = CheckExistMatchById(matchRepository)
     private val checkIsWaitingMatchById = CheckIsWaitingMatchById(matchRepository)
+    private val checkIsCloseMatchById = CheckIsCloseMatchById(matchRepository)
+    private val checkIsEndMatchById = CheckIsEndMatchById(matchRepository)
     private val checkExistMatchRequest = CheckExistMatchRequest(matchRequestRepository)
     private val checkAlreadyRequestMatch = CheckAlreadyRequestMatch(matchRequestRepository)
     private val checkIsWaitingMatchRequestById = CheckIsWaitingMatchRequestById(matchRequestRepository)
@@ -141,6 +142,93 @@ class MatchService (
 
         val match = updateMatchRequest(UpdateMatchRequestDto(matchRequestId, matchRequestStatus))
         return saveMatch(match)
+    }
+
+    fun enterMatchResult(matchId: Long, enterMatchResultRequest: EnterMatchResultRequest): Match {
+        checkIsClubAdmin.verify(CheckIsClubAdminDto(
+                userId = enterMatchResultRequest.requesterUserId,
+                clubId = enterMatchResultRequest.requesterClubId
+        ))
+        checkExistMatchById.verify(matchId)
+        checkIsCloseMatchById.verify(matchId)
+
+        val match = getMatchByIdFunction(matchId)
+        val matchDetailResult = enterMatchResultRequest.detailResult?.map {
+            MatchDetailResult(
+                    homeScore = it.hostScore,
+                    awayScore = it.guestScore,
+                    resultType = it.matchResultType
+            )
+        }
+        val matchIndividualResult = enterMatchResultRequest.individualResult?.map {
+            MatchIndividualResult(
+                    score = it.score,
+                    receiver = it.receiver,
+                    resultType = it.matchResultType
+            )
+        }
+
+        match.homeScore = enterMatchResultRequest.homeScore
+        match.awayScore = enterMatchResultRequest.awayScore
+        match.matchStatus = MatchStatus.END
+        match.matchResultReview = enterMatchResultRequest.matchReview
+        match.winner = if(enterMatchResultRequest.homeScore > enterMatchResultRequest.awayScore) match.home else match.away
+        matchDetailResult?.let { match.matchDetailResult?.addAll(it) }
+        matchIndividualResult?.let { match.matchIndividualResult?.addAll(it) }
+
+        return saveMatch(match)
+    }
+
+    fun getMatchSummaryResult(matchId: Long): MutableList<MatchSummaryResult> {
+        checkExistMatchById.verify(matchId)
+        checkIsEndMatchById.verify(matchId)
+
+        val match = getMatchByIdFunction(matchId)
+        val matchHomeDetailResultDto = MatchSummaryResult(
+                matchClubType = MatchClubType.HOME,
+                totalScore = match.homeScore ?: 0,
+                recentlyRecord = getRecentlyRecordById(match.home.id!!),
+                isVictory = match.homeScore ?: 0 > match.awayScore ?: 0
+        )
+        val matchAwayDetailResultDto = MatchSummaryResult(
+                matchClubType = MatchClubType.AWAY,
+                totalScore = match.awayScore ?: 0,
+                recentlyRecord = getRecentlyRecordById(match.away!!.id!!),
+                isVictory = match.awayScore ?: 0 > match.homeScore ?: 0
+        )
+
+        return mutableListOf(matchHomeDetailResultDto, matchAwayDetailResultDto)
+    }
+
+    fun getMatchDetailResult(matchId: Long): MatchDetailResultDto {
+        checkExistMatchById.verify(matchId)
+        checkIsEndMatchById.verify(matchId)
+
+        val match = getMatchByIdFunction(matchId)
+        return MatchDetailResultDto(
+                homeName = match.home.name,
+                awayName = match.away?.name ?: "",
+                matchDetailResultScore = match.matchDetailResult?.map {
+                    MatchDetailResultScore(
+                            matchResultType = it.resultType,
+                            homeScore = it.homeScore,
+                            awayScore = it.awayScore
+                    )
+                }?.toMutableList() ?: mutableListOf()
+        )
+    }
+
+    fun getMatchIndividualResult(matchId: Long): MutableList<MatchIndividualResultDto> {
+        checkExistMatchById.verify(matchId)
+        checkIsEndMatchById.verify(matchId)
+
+        return getMatchByIdFunction(matchId).matchIndividualResult?.map {
+            MatchIndividualResultDto(
+                    matchResultType = it.resultType,
+                    score = it.score,
+                    recevier = it.receiver
+            )
+        }?.toMutableList() ?: mutableListOf()
     }
 
     private fun createMatchListFilterTitle(startTimeFrom: Date?, startTimeTo: Date?, location: String?, matchStyle: MatchStyle?): String {

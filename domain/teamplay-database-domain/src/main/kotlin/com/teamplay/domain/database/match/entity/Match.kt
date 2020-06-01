@@ -20,6 +20,9 @@ data class Match(
     @OneToOne
     var away: Club? = null,
 
+    @OneToOne
+    var winner: Club? = null,
+
     @Column(nullable = false)
     val title: String,
 
@@ -35,13 +38,15 @@ data class Match(
     @Column(nullable = false)
     val introduce: String,
 
+    var matchResultReview: String? = null,
+
+    var homeScore: Int? = null,
+
+    var awayScore: Int? = null,
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     val matchStyle: MatchStyle,
-
-    val homeScore: Int? = null,
-
-    val awayScore: Int? = null,
 
     @Enumerated(EnumType.STRING)
     var matchStatus: MatchStatus = MatchStatus.WAITING,
@@ -49,9 +54,11 @@ data class Match(
     @OneToMany(mappedBy = "match", cascade = [CascadeType.PERSIST, CascadeType.MERGE])
     val matchRequests: MutableList<MatchRequest>? = mutableListOf(),
 
-    @OneToOne
-    @JoinColumn(name = "winner_id")
-    val winner: Club? = null,
+    @OneToMany(mappedBy = "match", cascade = [CascadeType.PERSIST, CascadeType.MERGE])
+    val matchDetailResult: MutableList<MatchDetailResult>? = mutableListOf(),
+
+    @OneToMany(mappedBy = "match", cascade = [CascadeType.PERSIST, CascadeType.MERGE])
+    val matchIndividualResult: MutableList<MatchIndividualResult>? = mutableListOf(),
 
     @CreationTimestamp
     val createdDate: Date? = Date(),
@@ -61,6 +68,8 @@ data class Match(
 ): EntityId {
     fun prepareForSave(): Match {
         this.matchRequests?.forEach { it.match = this }
+        this.matchDetailResult?.forEach { it.match = this }
+        this.matchIndividualResult?.forEach { it.match = this }
         return this
     }
 }
