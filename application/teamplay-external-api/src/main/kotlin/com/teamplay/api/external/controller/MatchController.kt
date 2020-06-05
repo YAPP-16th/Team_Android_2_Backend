@@ -1,8 +1,10 @@
 package com.teamplay.api.com.teamplay.api.external.controller
 
 import com.teamplay.api.com.teamplay.api.external.config.baseUrl
-import com.teamplay.api.com.teamplay.api.external.request.MatchRequest.*
-import com.teamplay.api.com.teamplay.api.external.response.MatchResponse.*
+import com.teamplay.api.com.teamplay.api.external.request.match.CreateMatch
+import com.teamplay.api.com.teamplay.api.external.request.match.CreateMatchRequest
+import com.teamplay.api.com.teamplay.api.external.request.match.EnterMatchResultRequest
+import com.teamplay.api.com.teamplay.api.external.response.match.*
 import com.teamplay.api.com.teamplay.api.external.service.AuthService
 import com.teamplay.api.com.teamplay.api.external.service.MatchService
 import com.teamplay.domain.database.jpa.match.repository.spec.MatchSpecs
