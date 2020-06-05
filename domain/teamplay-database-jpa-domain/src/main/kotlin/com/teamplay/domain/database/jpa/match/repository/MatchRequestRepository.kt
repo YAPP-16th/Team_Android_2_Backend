@@ -10,7 +10,7 @@ interface MatchRequestRepository : JpaRepository<MatchRequest, Long> {
     @Query("""
         SELECT mr
         from MatchRequest mr
-        WHERE mr.match.home.id = :clubId
+        WHERE mr.match.host.id = :clubId
         AND mr.matchRequestStatus = com.teamplay.domain.database.match.entity.MatchRequestStatus.WAITING
         AND mr.match.startTime > CURRENT_DATE
     """)

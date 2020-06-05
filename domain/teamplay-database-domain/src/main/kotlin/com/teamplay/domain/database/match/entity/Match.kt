@@ -15,10 +15,10 @@ data class Match(
     override val id: Long? = null,
 
     @OneToOne
-    val home: Club,
+    val host: Club,
 
     @OneToOne
-    var away: Club? = null,
+    var guest: Club? = null,
 
     @OneToOne
     var winner: Club? = null,
@@ -40,9 +40,9 @@ data class Match(
 
     var matchResultReview: String? = null,
 
-    var homeScore: Int? = null,
+    var hostScore: Int? = null,
 
-    var awayScore: Int? = null,
+    var guestScore: Int? = null,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

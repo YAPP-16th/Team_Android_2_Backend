@@ -15,7 +15,9 @@ dependencies {
     runtimeOnly("mysql:mysql-connector-java:8.0.18")
 
     implementation(project(":core:database-core"))
+    implementation(project(":core:function-core"))
     implementation(project(":domain:teamplay-database-domain"))
+//    implementation(project(":domain:teamplay-business-domain"))
 
     implementation("io.github.microutils:kotlin-logging:1.7.9")
     implementation("net.logstash.logback:logstash-logback-encoder:4.8")
