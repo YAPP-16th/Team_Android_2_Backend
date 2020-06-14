@@ -10,6 +10,7 @@ import com.teamplay.domain.business.club.function.*
 import com.teamplay.domain.business.club.validator.CheckAlreadyRegisteredClub
 import com.teamplay.domain.business.club.validator.CheckDuplicateClubName
 import com.teamplay.domain.business.club.validator.CheckExistClub
+import com.teamplay.domain.business.match.function.FindAllMatchByHostIdFunction
 import com.teamplay.domain.business.user.dto.UserInfo
 import com.teamplay.domain.business.user.function.FindUserById
 import com.teamplay.domain.database.club.entity.*
@@ -17,7 +18,9 @@ import com.teamplay.domain.database.jpa.club.repository.ClubAdminRepository
 import com.teamplay.domain.database.jpa.club.repository.ClubMemberRepository
 import com.teamplay.domain.database.jpa.club.repository.ClubRepository
 import com.teamplay.domain.database.jpa.club.repository.NoticeRepository
+import com.teamplay.domain.database.jpa.match.repository.MatchRepository
 import com.teamplay.domain.database.jpa.user.repository.UserRepository
+import com.teamplay.domain.database.match.entity.Match
 import com.teamplay.domain.database.user.entity.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -29,6 +32,7 @@ class ClubService @Autowired constructor(
     clubAdminRepository: ClubAdminRepository,
     clubMemberRepository: ClubMemberRepository,
     noticeRepository: NoticeRepository,
+    matchRepository: MatchRepository,
     userRepository: UserRepository
 ){
     private val findClubById = FindClubById(clubRepository)
@@ -46,6 +50,7 @@ class ClubService @Autowired constructor(
     private val findNoticeById = FindNoticeById(noticeRepository)
     private val findClubMembersByUserId = FindClubMembersByUserId(clubMemberRepository)
     private val findClubAdminsByUserId = FindClubAdminsByUserId(clubAdminRepository)
+    private val findAllMatchByHostIdFunction = FindAllMatchByHostIdFunction(matchRepository)
 
     private val checkDuplicateClubName = CheckDuplicateClubName(clubRepository)
     private val checkExistClub = CheckExistClub(clubRepository)
@@ -105,15 +110,30 @@ class ClubService @Autowired constructor(
         val admins = clubAdminToUserInfo(findClubAdmins(clubId))
         val club = findClubById(clubId)
 
+        val simpleFeeds = mutableListOf<SimpleFeeds>()
         // 가데이터 생성
         val notices = findNoticesByClubId(club.id)
         val noticeItem1 = SimpleNoticeInfo(notices[0])
-        val resultItem = SimpleResultInfo("테스트팀",club.createTeamDate, true)
-        val resultItem2 = SimpleResultInfo("테스트팀",club.createTeamDate, false)
-        val simpleFeeds = mutableListOf<SimpleFeeds>()
         simpleFeeds.add(SimpleFeeds(0,null,noticeItem1))
-        simpleFeeds.add(SimpleFeeds(1,resultItem,null))
-        simpleFeeds.add(SimpleFeeds(1,resultItem2,null))
+
+        val matches = findAllMatchByHostIdFunction(clubId);
+        matches.forEach { match ->
+            if(match.winner != null){
+                simpleFeeds.add(
+                    SimpleFeeds(
+                        1,
+                        SimpleResultInfo(
+                            match.id!!,
+                            match.guest!!.name,
+                            match.createdDate.toString(),
+                            clubId == match.winner!!.id
+                        ),
+                        null
+                    )
+                )
+            }
+
+        }
 
         return ClubResponse(
             SimpleClubInfo(
@@ -123,7 +143,7 @@ class ClubService @Autowired constructor(
                 createDate = club.createTeamDate,
                 memberCount = members.size
             ),
-            feedCount = 3,
+            feedCount = simpleFeeds.size,
             simpleFeeds = simpleFeeds
         )
     }
