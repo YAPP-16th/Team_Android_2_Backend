@@ -9,6 +9,8 @@ import java.util.*
 
 @Repository
 interface MatchRepository : JpaRepository<Match, Long>, JpaSpecificationExecutor<Match> {
+    fun findAllByHostId(hostId: Long): List<Match>
+
     fun getByMatchRequests_Id(matchRequestId: Long): Match
 
     @Query("""
