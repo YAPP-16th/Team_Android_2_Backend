@@ -8,5 +8,6 @@ class MatchScheduleInfoDTO (
     val matchDate: String? = null,
     val matchTime: String? = null,
     val requestStatus: MatchRequestStatus? = null,
-    val matchRequestId: Long? = null
+    val matchRequestId: Long? = null,
+    val matchId: Long? = null
 )

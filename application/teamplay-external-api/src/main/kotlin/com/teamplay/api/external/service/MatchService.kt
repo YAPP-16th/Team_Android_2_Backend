@@ -281,7 +281,8 @@ class MatchService (
                             title = "${it.host.name} vs ${it.guest?.name ?: ""}",
                             description = "${it.matchStyle} | ${it.location}",
                             matchDate = dateFormat.format(it.startTime),
-                            matchTime = "${timeFormat.format(it.startTime)} - ${timeFormat.format(it.endTime)}"
+                            matchTime = "${timeFormat.format(it.startTime)} - ${timeFormat.format(it.endTime)}",
+                            matchId = it.id
                     )
             )
         }
@@ -298,7 +299,8 @@ class MatchService (
                             title = "${it.host.name} vs ${it.guest?.name ?: ""}",
                             description = "${it.matchStyle} | ${it.location}",
                             matchDate = dateFormat.format(it.startTime),
-                            matchTime = "${timeFormat.format(it.startTime)} - ${timeFormat.format(it.endTime)}"
+                            matchTime = "${timeFormat.format(it.startTime)} - ${timeFormat.format(it.endTime)}",
+                            matchId = it.id
                     )
             )
         }
